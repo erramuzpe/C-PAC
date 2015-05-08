@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
+  <link href="http://erramuzpe.github.io/C-PAC/"/>
+  <updated>2015-05-08T13:54:00+02:00</updated>
+  <id>http://erramuzpe.github.io/C-PAC/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[New Post]]></title>
+    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/new-post/"/>
+    <updated>2015-05-08T13:44:48+02:00</updated>
+    <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/new-post</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
+  
+</feed>
