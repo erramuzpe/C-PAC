@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T14:57:56+02:00</updated>
+  <updated>2015-05-08T15:39:13+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -14,11 +14,16 @@
 
   
   <entry>
-    <title type="html"><![CDATA[New Post]]></title>
+    <title type="html"><![CDATA[First Post - Hello World]]></title>
     <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/new-post/"/>
     <updated>2015-05-08T13:44:48+02:00</updated>
     <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/new-post</id>
-    <content type="html"><![CDATA[
+    <content type="html"><![CDATA[<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
