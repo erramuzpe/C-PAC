@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T17:28:52+02:00</updated>
+  <updated>2015-05-08T17:30:11+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -22,7 +22,7 @@
 
 <p>In this first post I will try to explain some of what I have done for my first two scripts for C-PAC as my first contact with C-PAC. I would like to learn a lot about C-PAC&rsquo;s structure, workflows etc. and give back too. The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
 
-<p>In order to learn from <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw a question on cross correlations (<a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">this</a>) and though it could be a good exercise to try possibilities (out of using other available utils like FSLcc) and afterwards, I also made the calculation for Transfer Entropy (TE) Granger Causality (GC)). As a short description, these 2 scripts calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
+<p>In order to learn from <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw a question on cross correlations <a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">this</a> and though it could be a good exercise to try possibilities (out of using other available utils like FSLcc) and afterwards, I also made the calculation for Transfer Entropy (TE) Granger Causality (GC)). As a short description, these 2 scripts calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
 
 <p>My code is in the copy I <a href="https://github.com/erramuzpe/C-PAC">forked</a>, in a new branch called <a href="https://github.com/erramuzpe/C-PAC/tree/series_mod">series_mod</a>. I saved my scripts in a folder of the same name.</p>
 
