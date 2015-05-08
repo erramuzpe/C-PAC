@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T13:54:00+02:00</updated>
+  <updated>2015-05-08T14:57:56+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[github.com/erramuzpe]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
