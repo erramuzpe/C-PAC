@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T18:14:14+02:00</updated>
+  <updated>2015-05-08T18:16:29+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -185,15 +185,15 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 
 <p>It is a trivial computation after extracting the time-series. This data could have been treated or filtered, but this first scripts were just to train myself with the repo, python, nypipe workflows etc. . I will next discuss about the measures we are going to work on.</p>
 
+<p>The result for the correlation when making calculations on preprocessed data of 3mm voxel-size and a mask of 90 ROIs parcellation is:</p>
+
+<p><img class="left" src="http://erramuzpe.github.io/C-PAC/results.png" width="350" height="350" title="image" alt="images"></p>
+
 <p>I started from my own implementations in python, but also took some of this code and ideas from these tutorials:</p>
 
 <p>[1] <a href="http://nipy.org/nitime/examples/resting_state_fmri.html">http://nipy.org/nitime/examples/resting_state_fmri.html</a></p>
 
 <p>[2] <a href="http://nipy.org/nitime/examples/granger_fmri.html">http://nipy.org/nitime/examples/granger_fmri.html</a></p>
-
-<p>The result for the correlation when making calculations on preprocessed data of 3mm voxel-size and a mask of 90 ROIs parcellation is:</p>
-
-<p><img src="http://postimg.org/image/59b1av19j/" alt="results" /></p>
 ]]></content>
   </entry>
   
