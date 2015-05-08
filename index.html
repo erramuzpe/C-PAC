@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="Hi everyone, this is the presentation for my blog. Here, I will write about my experience with C-PAC development. Our intention here is to develop a &hellip;">
+  <meta name="description" content="In this blog I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -87,11 +87,11 @@
   </header>
 
 
-  <div class="entry-content"><p>Hi everyone, this is the presentation for my blog. Here, I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users) to calculate some measures over non-linear fMRI timeseries and integrate them within C-PAC. Our aim is to extend and improve C-PAC&rsquo;s features.</p>
+  <div class="entry-content"><p>In this blog I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users) to calculate some measures over non-linear fMRI timeseries and integrate them in a workflow. Our aim is to extend and improve C-PAC&rsquo;s features.</p>
 
-<p>In this post I will try to explain what I&rsquo;ve done in my first two scripts for C-PAC. So, basically, this is my first approach to C-PAC; I need still to learn a lot (this is the main objective of the program) about C-PAC&rsquo;s structure, workflow etc. . The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
+<p>In this first post I will try to explain some of what I have done for my first two scripts for C-PAC as my first contact with C-PAC. I would like to learn a lot about C-PAC&rsquo;s structure, workflows etc. and give back too. The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
 
-<p>So, I was taking a brief look to <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw <a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">this</a> and though it could be a good exercise to try to code it (and afterwards, I also made the calculation of GC). What these 2 scripts make is to calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
+<p>In order to learn from <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw a question on cross correlations (<a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">this</a>) and though it could be a good exercise to try possibilities (out of using other available utils like FSLcc) and afterwards, I also made the calculation for Transfer Entropy (TE) Granger Causality (GC)). As a short description, these 2 scripts calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
 
 <p>My code is in the copy I <a href="https://github.com/erramuzpe/C-PAC">forked</a>, in a new branch called <a href="https://github.com/erramuzpe/C-PAC/tree/series_mod">series_mod</a>. I saved my scripts in a folder of the same name.</p>
 
@@ -155,7 +155,7 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>There are 3 input parameters; fMRI series, the ROI-mask and TR of the fMRI. This function makes use of the functions in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py"><em>utils.py</em></a>. Let&rsquo;s see part of the code (you can see the whole script in the repo):</p>
+<p>There are 3 input parameters; fMRI series, the ROI-mask and TR of the fMRI. This function makes use of the functions in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py"><em>utils.py</em></a>. Let&rsquo;s see part of the code (present in my repo):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -252,24 +252,17 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you can see, it is an easy computation after extracting the time-series. This data could have been treated or filtered, but this first scripts were just to train myself with the repo, python, nypipe workflows etc. . We have to discuss about the measures we are going to work on, if we are going to apply them voxel-wise, region-wise etc. .</p>
+<p>It is a trivial computation after extracting the time-series. This data could have been treated or filtered, but this first scripts were just to train myself with the repo, python, nypipe workflows etc. . I will next discuss about the measures we are going to work on.</p>
 
-<p>I would be very grateful to have feedback of this code from main developers (structure, improvements&hellip;), since I want to train myself and keep doing things well-done.</p>
+<p>I started from my own implementations in python […]</p>
 
-<p>I took some of this code and ideas from these tutorials:</p>
+<p>But also took some of this code and ideas from these tutorials:</p>
 
 <p>[1] <a href="http://nipy.org/nitime/examples/resting_state_fmri.html">http://nipy.org/nitime/examples/resting_state_fmri.html</a></p>
 
 <p>[2] <a href="http://nipy.org/nitime/examples/granger_fmri.html">http://nipy.org/nitime/examples/granger_fmri.html</a></p>
 
-<h3>Some questions regarding to C-PAC</h3>
-
-<ul>
-<li>Have I used an appropriate structure?  (init.py, utils.py ?)</li>
-<li>How does de GUI &lsquo;connect&rsquo; with functions</li>
-<li>Any other tips?</li>
-</ul>
-
+<p>The result when making calculations on preprocessed data is… {brief descrition}</p>
 </div>
   
   
