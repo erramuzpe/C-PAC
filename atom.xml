@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T16:45:58+02:00</updated>
+  <updated>2015-05-08T16:48:25+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -196,7 +196,7 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 <h3>Some questions regarding to C-PAC</h3>
 
 <ul>
-<li>Have I used an appropriate structure?  (<em><em>init</em> _ </em>.py<em>, </em>series_mod.py<em> and </em>utils.py_ ?)</li>
+<li>Have I used an appropriate structure?  (init.py, utils.py ?)</li>
 <li>How does de GUI &lsquo;connect&rsquo; with functions</li>
 <li>Any other tips?</li>
 </ul>
