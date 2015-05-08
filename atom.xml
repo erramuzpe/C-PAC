@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T18:18:53+02:00</updated>
+  <updated>2015-05-08T18:20:03+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -193,7 +193,7 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 
 <p>The result for the correlation when making calculations on preprocessed data of 3mm voxel-size and a mask of 90 ROIs parcellation is</p>
 
-<p><img class="left" src="http://erramuzpe.github.io/C-PAC/result.png" width="350" height="350" title="image" alt="images"></p>
+<p><img class="left" src="http://erramuzpe.github.io/C-PAC/images/result.png" width="350" height="350" title="image" alt="images"></p>
 
 <p><a href="http://postimg.org/image/59b1av19j/">http://postimg.org/image/59b1av19j/</a></p>
 ]]></content>
