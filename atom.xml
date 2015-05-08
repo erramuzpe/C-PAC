@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-08T16:52:54+02:00</updated>
+  <updated>2015-05-08T16:53:46+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -14,24 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[First Post - Hello World]]></title>
-    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/"/>
-    <updated>2015-05-08T13:44:48+02:00</updated>
-    <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World</id>
-    <content type="html"><![CDATA[<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
-</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[First Scripts for C-PAC: This Is Just the Beginning]]></title>
-    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/07/first-scripts-for-c-pac-this-is-just-the-beginning/"/>
-    <updated>2015-05-07T15:40:53+02:00</updated>
-    <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/07/first-scripts-for-c-pac-this-is-just-the-beginning</id>
+    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/"/>
+    <updated>2015-05-08T15:40:53+02:00</updated>
+    <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning</id>
     <content type="html"><![CDATA[<p>Hi everyone, this is the presentation for my blog. Here, I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users) to calculate some measures over non-linear fMRI timeseries and integrate them within C-PAC. Our aim is to extend and improve C-PAC&rsquo;s features.</p>
 
 <p>In this post I will try to explain what I&rsquo;ve done in my first two scripts for C-PAC. So, basically, this is my first approach to C-PAC; I need still to learn a lot (this is the main objective of the program) about C-PAC&rsquo;s structure, workflow etc. . The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
@@ -214,6 +200,20 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 <li>How does de GUI &lsquo;connect&rsquo; with functions</li>
 <li>Any other tips?</li>
 </ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[First Post - Hello World]]></title>
+    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/"/>
+    <updated>2015-05-08T13:44:48+02:00</updated>
+    <id>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World</id>
+    <content type="html"><![CDATA[<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
