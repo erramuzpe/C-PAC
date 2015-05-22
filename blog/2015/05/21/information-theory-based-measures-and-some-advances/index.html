@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Information Theory Based Measures and Some Advances - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <meta name="author" content="github.com/erramuzpe">
+
+  
+  <meta name="description" content="During the bonding period, very interesting discussions came across related to the measures we could develop during the project. As an initial &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/">
+  <link href="/C-PAC/favicon.png" rel="icon">
+  <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
+  <script src="/C-PAC/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/C-PAC/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/C-PAC/">BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</a></h1>
+  
+    <h2>Contributing to C-PAC</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/C-PAC/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="erramuzpe.github.io/C-PAC">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/C-PAC/">Blog</a></li>
+  <li><a href="/C-PAC/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Information Theory Based Measures and Some Advances</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-21T17:55:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>5:55 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>During the bonding period, very interesting discussions came across related to the measures we could develop during the project. As an initial exercise, I thought it could be interesting to test some basic <a href="https://en.wikipedia.org/wiki/Information_theory">Information Theory</a> based measures. Basically, I wanted to reproduce the calculation of <a href="https://en.wikipedia.org/wiki/Entropy_%28information_theory%29">Entropy</a> and the related measures shown in this image:</p>
+
+<p><img class="left" src="/C-PAC/images/entropy.png" width="350" height="350" title="image" alt="image"></p>
+
+<p>The calculation of the Entropy is quite straightforward, so I decided to test different implementations of some people and test them with the <a href="https://docs.python.org/2/library/timeit.html">timeit</a> module.</p>
+
+<p>It turned that among 4-5 different functions I found <a href="http://blog.biolab.si/2012/06/15/computing-joint-entropy-in-python/">this one</a> coded using numpy and allowing also the calculation of the <a href="https://en.wikipedia.org/wiki/Joint_entropy">Joint Entropy</a> using itertools was the fastest by far.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">n_insctances</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span class='line'>    <span class="n">H</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">classes</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]):</span>
+</span><span class='line'>        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_insctances</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">predictions</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">H</span> <span class="o">+=</span> <span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">H</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Having the basic blocks, I built the Conditional Entropy and Mutual Information easily:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Hx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hxy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">MI</span> <span class="o">=</span> <span class="n">Hx</span> <span class="o">+</span> <span class="n">Hy</span> <span class="o">-</span> <span class="n">Hxy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">MI</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">cond_entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hyx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">CE</span> <span class="o">=</span> <span class="n">Hyx</span> <span class="o">-</span> <span class="n">Hy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">CE</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I proved the functions over small vectors and all the properties seemed to work well. In the other hand, I sorted out the loading of the fMRI files (that I was loading with an external function) and the calculation of the TR using just the NIFTI header using <a href="http://nipy.org/nibabel/">nibabel</a>.</p>
+
+<p>The first time trying to calculate the Entropy voxel-wise (it took like 5 mins and used only 1 core, so this must be solved in <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py#L5880">some way</a> or <a href="https://docs.python.org/2/library/multiprocessing.html">another</a>) and over 90 timeseries extracted from a ROI-mask, I failed. As these measures are calculated over probability density functions, the data must be converted into &lsquo;states&rsquo;, binarized for example. This is another problem I have to solve: Dealing with fMRI datatypes and FSL functions. I still don&rsquo;t know how to make use directly of FSL utils (and neither about the different FSL options I have. This is a TO DO for my list).</p>
+
+<p>To solve the problem, I&rsquo;ve created my own timeseries extractor (generates a Numpy array, not a CSV file as in <em>gen_roi_timeseries</em>.<em>py</em>):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'>    <span class="n">unit_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">datafile</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">datafile</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">unit_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;FAIL&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">unit_data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">roi_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n_samples</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Be carefull with number of ROIs and np-arrays</span>
+</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">node_array</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">unit_data</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">roi_data</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This structure can be used to extract all voxels timeseries as well. As work for the next week, this data has to be binarized to two (or more) &lsquo;states&rsquo; and then passed to the IT functions.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">github.com/erramuzpe</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-21T17:55:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>5:55 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/" title="Previous Post: First scripts for C-PAC: this is just the beginning">&laquo; First scripts for C-PAC: this is just the beginning</a>
+      
+      
+        <a class="basic-alignment right" href="/C-PAC/blog/2015/05/22/bonding-period-discussion-measures-to-work-with/" title="Next Post: Bonding period discussion: Measures to work with">Bonding period discussion: Measures to work with &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/05/22/bonding-period-discussion-measures-to-work-with/">Bonding Period Discussion: Measures to Work With</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/">Information Theory Based Measures and Some Advances</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/">First Scripts for C-PAC: This Is Just the Beginning</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/05/08/Hello-World/">First Post - Hello World</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - github.com/erramuzpe -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
