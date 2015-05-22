@@ -162,7 +162,7 @@
 
 <p>The calculation of the Entropy is quite straightforward, so I decided to test different implementations of some people and test them with the <a href="https://docs.python.org/2/library/timeit.html">timeit</a> module.</p>
 
-<p>It turned that among 4-5 different functions I found <a href="http://blog.biolab.si/2012/06/15/computing-joint-entropy-in-python/">this one</a> coded using numpy and allowing also the calculation of the <a href="https://en.wikipedia.org/wiki/Joint_entropy">Joint Entropy</a> using itertools was the fastest by far.</p>
+<p>It turned that among 4-5 different functions I found <a href="http://blog.biolab.si/2012/06/15/computing-joint-entropy-in-python/">this one</a> coded using numpy and allowing also the calculation of the  <a href="https://en.wikipedia.org/wiki/Joint_entropy">Joint Entropy</a> using itertools was the fastest by far.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -224,7 +224,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>I proved the functions over small vectors and all the properties seemed to work well. In the other hand, I sorted out the loading of the fMRI files (that I was loading with an external function) and the calculation of the TR using just the NIFTI header using <a href="http://nipy.org/nibabel/">nibabel</a>.</p>
+<p>I proved the functions over small vectors and all the properties seemed to work well. In the other hand, I sorted out the loading of the fMRI files (that I was loading with an external function) and the calculation of the TR using just the NIFTI header using  <a href="http://nipy.org/nibabel/">nibabel</a>.</p>
 
 <p>The first time trying to calculate the Entropy voxel-wise (it took like 5 mins and used only 1 core, so this must be solved in <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py#L5880">some way</a> or <a href="https://docs.python.org/2/library/multiprocessing.html">another</a>) and over 90 timeseries extracted from a ROI-mask, I failed. As these measures are calculated over probability density functions, the data must be converted into &lsquo;states&rsquo;, binarized for example. This is another problem I have to solve: Dealing with fMRI datatypes and FSL functions. I still don&rsquo;t know how to make use directly of FSL utils (and neither about the different FSL options I have. This is a TO DO for my list).</p>
 
