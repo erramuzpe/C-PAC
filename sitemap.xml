@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/05/22/bonding-period-discussion-measures-to-work-with/</loc>
-    <lastmod>2015-05-22T10:15:01+02:00</lastmod>
-  </url>
-  <url>
-    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/</loc>
-    <lastmod>2015-05-21T17:55:05+02:00</lastmod>
-  </url>
-  <url>
     <loc>http://erramuzpe.github.io/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/</loc>
     <lastmod>2015-05-08T15:40:53+02:00</lastmod>
   </url>
