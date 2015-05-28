@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="Yesterday was the first day of coding of the program, I hope this summer to be a great learning period! We are now working in a first package of &hellip;">
+  <meta name="description" content="First of all, I want to anounce that I have enabled comments in the blog, so readers can comment on the entries. Let&rsquo;s see if this new feature &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,192 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/28/workflows-working-correlation-and-mutual-information/">Workflows Working: Correlation and Mutual Information</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-28T11:32:58+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:32 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>First of all, I want to anounce that I have enabled comments in the blog, so readers can comment on the entries. Let&rsquo;s see if this new feature enriches the blog.</p>
+
+<p>After having some troubles to get them working, we have the first two nipype workflows running. Both are pairwise calculations made over a series of signals selected by the user with a mask:</p>
+
+<ul>
+<li>Pairwise Correlation over timeseries given a mask.</li>
+<li>Pairwise Mutual Information over timeseries given a mask.</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_ROI_corr</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">corr</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">corr_mat</span> <span class="o">=</span> <span class="n">corr</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">corr_mat</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_MI</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">transform</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">mutual_information</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">,</span><span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">n_var</span> <span class="o">=</span> <span class="n">ROI_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MI_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_var</span><span class="p">,</span><span class="n">n_var</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">j_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">MI_mat</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutual_information</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,:],</span><span class="n">ROI_data</span><span class="p">[</span><span class="n">j_</span><span class="p">,:])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">MI_mat</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="right" src="/C-PAC/images/CORRgraph.png" width="200" height="200" title="image" alt="image">
+<img class="right" src="/C-PAC/images/MIgraph.png" width="200" height="200" title="image" alt="image"></p>
+
+<p>In both of them a fMRI file and a mask are needed, and for the MI calculation a variable &ldquo;bins&rdquo; is also needed. This variable is the number of states that the user wants the signals to be discretized to.</p>
+
+<p>This brings up a new problem; <strong>how many states should we choose to discretize?</strong> We are working on this question and discussing whether we should introduce a measure that optimizes the number of bins/states to choose based on the principle of minimizing the information lost. Seems like we could implement some tests to choose a proper &ldquo;number of states&rdquo;, we will have a further debate.</p>
+
+<p>The discretization is done with the following helper function:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">x_old</span><span class="p">,</span> <span class="n">Nbins</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">    TRANSFORM This funcion computes transforms in a matrix</span>
+</span><span class='line'><span class="sd">    to obtain a matrix scaled between the especified number of bins</span>
+</span><span class='line'><span class="sd">    INPUT:</span>
+</span><span class='line'><span class="sd">      x_old: nobservations * nvariables matrix</span>
+</span><span class='line'><span class="sd">      Nbins: Number of bins of the transformed matrix (NBins=2 values betwen</span>
+</span><span class='line'><span class="sd">     -1, NBins=3 values between 0-2...)</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    OUTPUT:  </span>
+</span><span class='line'><span class="sd">    x_new: New scaled matrix</span>
+</span><span class='line'><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">npoints</span><span class="p">,</span> <span class="n">num_vals</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>    <span class="n">xmax</span> <span class="o">=</span> <span class="n">Nbins</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="n">xmin</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="n">ymax</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">ymin</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#x_new = ((xmax - xmin)/(ymax - ymin) )* x_old - ( (xmax - xmin) / (ymax - ymin) ) * ymin + xmin;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x_old</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">x_new</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">ymin</span><span class="o">+</span><span class="n">xmin</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">x_new</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Also, when testing the workflows, we encountered another problem. While running the scripts by our own with the code alone, we had the results as we were expecting; but, when building and running the workflows, we can not get the results. We need to investigate on this, since is the basis of many things.</p>
+
+<p>To do:</p>
+
+<ul>
+<li>Solve the problems with workflows.</li>
+<li>Try real data over the workflows and see if we can get some interesting results.</li>
+<li>Implement further synchronization analysis measures.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -716,6 +902,10 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/05/28/workflows-working-correlation-and-mutual-information/">Workflows Working: Correlation and Mutual Information</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/05/26/coding-has-begun/">Coding Has Begun!</a>
       </li>
     
@@ -729,10 +919,6 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
     
       <li class="post">
         <a href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/">First Scripts for C-PAC: This Is Just the Beginning</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/05/08/Hello-World/">First Post - Hello World</a>
       </li>
     
   </ul>
