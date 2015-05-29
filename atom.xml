@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-05-28T19:14:01+02:00</updated>
+  <updated>2015-05-29T09:16:02+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -99,7 +99,7 @@
 
 <p>In both of them a fMRI file and a mask are needed, and for the MI calculation a variable &ldquo;bins&rdquo; is also needed. This variable is the number of states that the user wants the signals to be discretized to.</p>
 
-<p>This brings up a new problem; <strong>how many states should we choose to discretize?</strong> We are working on this question and discussing whether we should introduce a measure that optimizes the number of bins/states to choose based on the principle of minimizing the information lost. Seems like we could implement some tests to choose a proper &ldquo;number of states&rdquo;, we will have a further debate.</p>
+<p>This brings up a new problem; <strong>how many states should we choose to discretize?</strong> We are working on this question and discussing whether we should introduce a measure that optimizes the number of bins/states to choose, between other fitting entropy or correlation formalisms. Seems like we could implement some tests to choose a proper &ldquo;number of states&rdquo;, we will have a further debate.</p>
 
 <p>The discretization is done with the following helper function:</p>
 
