@@ -29,7 +29,6 @@ import anat_preproc, \
        generate_motion_statistics, \
        alff, \
        qc, \
-       seg_preproc, \
        vmhc, \
        median_angle, \
        timeseries, \
