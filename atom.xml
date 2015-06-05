@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-06-04T15:53:07+02:00</updated>
+  <updated>2015-06-05T10:41:35+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>Last week we dealt with some aspects on how to construct the workflows:</p>
 
 <ul>
-<li>Develop fully functional ones where to interate functions. ✓ [Currently, to make transformations with  the data generated during the workflow, you have to specifically save it]</li>
+<li>Develop fully functional ones where to integrate functions. ✓ [Currently, to make transformations with  the data generated during the workflow, you have to specifically save it]</li>
 </ul>
 
 
