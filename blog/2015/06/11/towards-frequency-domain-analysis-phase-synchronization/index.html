@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Towards Frequency Domain Analysis: Phase Synchronization - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <title>Towards Frequency Domain Analysis and Phase Synchronization - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="This week we have been discussing further about the possibility of developing some frequeny analysis tools to integrate in the package. Specifically &hellip;">
+  <meta name="description" content="This week we have been discussing further about the possibility of developing some frequency analysis tools to integrate in the package. Although &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">Towards Frequency Domain Analysis: Phase Synchronization</h1>
+      <h1 class="entry-title">Towards Frequency Domain Analysis and Phase Synchronization</h1>
     
     
       <p class="meta">
@@ -84,9 +84,7 @@
   </header>
 
 
-<div class="entry-content"><p>This week we have been discussing further about the possibility of developing some frequeny analysis tools to integrate in the package. Specifically, we are going to take as guide and example the methods described in the paper by Ponce et al. <a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004100">[1]</a>.</p>
-
-<p>Our intention is to build up some valuable scripts that allow us to capture information using the frequency domain. We have in mind to perform Phase Synchronization analysis over timeseries and also building some measures to use them as features for a Fingerprint analysis.</p>
+<div class="entry-content"><p>This week we have been discussing further about the possibility of developing some frequency analysis tools to integrate in the package. Although CPAC already has some tools to work on the frequency domain, we are thinking in building up some valuable scripts that allow us to capture information using the frequency domain. Our intention is to develop measures such Phase Synchronization and identification of patterns based on frequency domain analysis, to be used as features for Fingerprint analysis. Specifically, as starting point, we are going to take as guide and example the methods described in the paper by Ponce et al. <a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004100">[1]</a>, with the intention of performing a similar analysis over fMRI. Our goal is to do so and extending them with measures like temporal power spectral density (PSDT).</p>
 
 <h2><strong>Phase synchronization analysis</strong></h2>
 
@@ -100,7 +98,7 @@
 
 <p><img class="center" src="/C-PAC/images/plv.png" width="300" height="300" title="image" alt="image"></p>
 
-<p>Last week, I already deveveloped a simple filter and this week I have been practicing further with the numpy.signal package. Some example of code, partially changed from <a href="http://gribblelab.org/scicomp/09_Signals_sampling_filtering.html">this</a> excellent tutorial :</p>
+<p>Last week, I already deveveloped a simple filter and this week I have been practicing further with the numpy.signal package. Some example of code, partially changed from <a href="http://gribblelab.org/scicomp/09_Signals_sampling_filtering.html">this</a> excellent tutorial. Under each block of code, I have plotted an example over fMRI data (it is clear that the used data has been already preprocessed and filtered):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -139,7 +137,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p><img class="center" src="/C-PAC/images/plot1.png" width="300" height="300" title="image" alt="image"></p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -178,7 +176,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p><img class="center" src="/C-PAC/images/figure_2.png" width="300" height="300" title="image" alt="image"></p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -238,6 +236,8 @@
 </span><span class='line'>  
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><img class="center" src="/C-PAC/images/figure_3.png" width="300" height="300" title="image" alt="image"></p>
 </div>
 
 
@@ -292,7 +292,7 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization/">Towards Frequency Domain Analysis: Phase Synchronization</a>
+        <a href="/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization/">Towards Frequency Domain Analysis and Phase Synchronization</a>
       </li>
     
       <li class="post">

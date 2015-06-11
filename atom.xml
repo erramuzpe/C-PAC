@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-06-11T14:07:18+02:00</updated>
+  <updated>2015-06-11T17:08:47+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -14,13 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Towards Frequency Domain Analysis: Phase Synchronization]]></title>
+    <title type="html"><![CDATA[Towards Frequency Domain Analysis and Phase Synchronization]]></title>
     <link href="http://erramuzpe.github.io/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization/"/>
     <updated>2015-06-11T11:54:16+02:00</updated>
     <id>http://erramuzpe.github.io/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization</id>
-    <content type="html"><![CDATA[<p>This week we have been discussing further about the possibility of developing some frequeny analysis tools to integrate in the package. Specifically, we are going to take as guide and example the methods described in the paper by Ponce et al. <a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004100">[1]</a>.</p>
-
-<p>Our intention is to build up some valuable scripts that allow us to capture information using the frequency domain. We have in mind to perform Phase Synchronization analysis over timeseries and also building some measures to use them as features for a Fingerprint analysis.</p>
+    <content type="html"><![CDATA[<p>This week we have been discussing further about the possibility of developing some frequency analysis tools to integrate in the package. Although CPAC already has some tools to work on the frequency domain, we are thinking in building up some valuable scripts that allow us to capture information using the frequency domain. Our intention is to develop measures such Phase Synchronization and identification of patterns based on frequency domain analysis, to be used as features for Fingerprint analysis. Specifically, as starting point, we are going to take as guide and example the methods described in the paper by Ponce et al. <a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004100">[1]</a>, with the intention of performing a similar analysis over fMRI. Our goal is to do so and extending them with measures like temporal power spectral density (PSDT).</p>
 
 <h2><strong>Phase synchronization analysis</strong></h2>
 
@@ -34,7 +32,7 @@
 
 <p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/plv.png" width="300" height="300" title="image" alt="image"></p>
 
-<p>Last week, I already deveveloped a simple filter and this week I have been practicing further with the numpy.signal package. Some example of code, partially changed from <a href="http://gribblelab.org/scicomp/09_Signals_sampling_filtering.html">this</a> excellent tutorial :</p>
+<p>Last week, I already deveveloped a simple filter and this week I have been practicing further with the numpy.signal package. Some example of code, partially changed from <a href="http://gribblelab.org/scicomp/09_Signals_sampling_filtering.html">this</a> excellent tutorial. Under each block of code, I have plotted an example over fMRI data (it is clear that the used data has been already preprocessed and filtered):</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -73,7 +71,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/plot1.png" width="300" height="300" title="image" alt="image"></p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -112,7 +110,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/figure_2.png" width="300" height="300" title="image" alt="image"></p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -172,6 +170,8 @@
 </span><span class='line'>  
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/figure_3.png" width="300" height="300" title="image" alt="image"></p>
 ]]></content>
   </entry>
   
@@ -181,20 +181,14 @@
     <updated>2015-06-10T17:29:44+02:00</updated>
     <id>http://erramuzpe.github.io/C-PAC/blog/2015/06/10/multivariate-granger-causality-in-python-for-fmri-timeseries-analysis</id>
     <content type="html"><![CDATA[<p>Wiener-Granger causality (“G-causality”) is a statistical notion of causality applicable to time series data, whereby cause precedes, and helps predict, effect.
-For the purpose of analysing fMRI timeseries, we have developed a series of python scripts to calculate the Multivariate Granger Causality (MVGC) based on the <a href="http://www.sussex.ac.uk/sackler/mvgc/">MVGC toolbox</a> of Barnett &amp; Seth <a href="http://www.sciencedirect.com/science/article/pii/S0165027013003701">[1]</a>.
+For the purpose of analysing fMRI timeseries, we have developed as a first approach a series of python scripts to calculate the Multivariate Granger Causality (MVGC) based on the <a href="http://www.sussex.ac.uk/sackler/mvgc/">MVGC toolbox</a> of Barnett &amp; Seth <a href="http://www.sciencedirect.com/science/article/pii/S0165027013003701">[1]</a>.
 The most common operationalisation of G-causality, and
-the one on which the MVGC Toolbox is based, utilises VAR
-modelling of time series data.</p>
+the one on which the MVGC Toolbox is based, utilises VAR (vector autoregression)
+modelling of time series data. But it is not the only one, and our intention is to explore other options too and extend to other options that could be more robust.</p>
 
-<p>G-causality assumes two jointly distributed vector-valued stochastic pro-
-cesses (“variables”) X = X 1 , X 2 , &hellip;, Y = Y 1 , Y 2 , &hellip;. We say
-that Y does not G-cause X if and only if X, conditional on its
-own past, is independent of the past of Y; intuitively, past values
-of Y yield no information about the current value of X beyond
-information already contained in the past of X itself. If, con-
-versely, the past of Y does convey information about the future
-of X above and beyond all information contained in the past
-of X then we say that Y G-causes X.</p>
+<p>G-causality assumes two jointly distributed vector-valued stochastic processes (“variables”) X = X1 , X2 , &hellip;, Y = Y1 , Y2 , &hellip;. We say that X does not G-cause Y if and only if Y, conditional on its own past, is independent of the past of X; intuitively, past values of X yield no information about the current value of Y beyond information already contained in the past of Y itself. If, conversely, the past of X does convey information about the future of Y above and beyond all information contained in the past of Y then we say that X G-causes Y, as you can see in the image.</p>
+
+<p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/gc.jpg" width="300" height="300" title="image" alt="image"></p>
 
 <p>The steps to calculate MVGC are the following: We first have to compute the autocovariance matrix from the timeseries. After that, extract the coefficients with the VAR modelling and finally, perform the calculation of the MVGC. More detailed explanations and comments of the code on GitHub and the paper itself. In the following example, X is the timeseries matrix and q is the order of the model (number of lags).</p>
 
@@ -235,7 +229,7 @@ of X then we say that Y G-causes X.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>For the calculation of the MVGC, inputs needed are G (autocovariance sequence), x (vector of indices of target (causee) multi-variable) and y (vector of indices of source (causal) multi-variable). The MVGC calculation, extracts the coefficients with the VAR model of all variables (x, y, z) and then without the source (xz).  The output F is the Granger Causality itself.</p>
+<p>For the calculation of the MVGC, inputs needed are G (autocovariance sequence), x (vector of indices of target (causee) multi-variable) and y (vector of indices of source (causal) multi-variable). The MVGC calculation, extracts the coefficients with the VAR model of all variables (x, y, z) and then without the source (x,z).  The output F is the Granger Causality itself.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
