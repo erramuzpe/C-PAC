@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="This week we have been discussing further about the possibility of developing some frequency analysis tools to integrate in the package. Although &hellip;">
+  <meta name="description" content="This week we have been centered in developing new measures for C-PAC. The first one, Transfer Entropy, is related to the first measures we did ( &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,165 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">New Measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-17T11:34:54+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:34 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This week we have been centered in developing new measures for C-PAC. The first one, Transfer Entropy, is related to the first measures we did (Entropy, Mutual Information) addind a lag-time to one of the series, while the second and the third ones have a frequency based approach based on phase synchronization analysys.</p>
+
+<h2><strong>Transfer Entropy</strong></h2>
+
+<p>The Transfer Entropy has been developed following our interest in measures which would compare past of the signals with his later values (like Granger Causality) and mixing with the Information Theory concept.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Transfer_entropy">Transfer Entropy</a> is a non-parametric statistic measuring the amount of directed (time-asymmetric) transfer of information between two random processes. Transfer entropy from a process X to another process Y is the amount of uncertainty reduced in future values of Y by knowing the past values of X given past values of Y and is denoted as:</p>
+
+<p><img class="center" src="/C-PAC/images/TE_formula.png" width="500" height="500" title="image" alt="image"></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">transfer_entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">lag</span><span class="p">):</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">cond_entropy</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">entropy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># future of i</span>
+</span><span class='line'>    <span class="n">Fi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">-</span><span class="n">lag</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># past of i</span>
+</span><span class='line'>    <span class="n">Pi</span> <span class="o">=</span> <span class="n">X</span>
+</span><span class='line'>    <span class="c"># past of j</span>
+</span><span class='line'>    <span class="n">Pj</span> <span class="o">=</span> <span class="n">Y</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Transfer entropy</span>
+</span><span class='line'>    <span class="n">Inf_from_Pi_to_Fi</span> <span class="o">=</span> <span class="n">cond_entropy</span><span class="p">(</span><span class="n">Fi</span><span class="p">,</span> <span class="n">Pi</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#same as cond_entropy(Fi, Pi_Pj)</span>
+</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Pi</span><span class="p">,</span><span class="n">Pj</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hyx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Fi</span><span class="p">,</span><span class="n">Pj</span><span class="p">,</span><span class="n">Pi</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Inf_from_Pi_Pj_to_Fi</span> <span class="o">=</span> <span class="n">Hyx</span> <span class="o">-</span> <span class="n">Hy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">TE_from_j_to_i</span> <span class="o">=</span> <span class="n">Inf_from_Pi_to_Fi</span><span class="o">-</span><span class="n">Inf_from_Pi_Pj_to_Fi</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">TE_from_j_to_i</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From this, we have built also a workflow that allows to calculate the TE values over a series of fMRI data. A first test has been carried out with real data using the same dataset of previous entries (a series of 28 subjects and a parcellation of 90 ROIs). Descriptively, mean values over subjects for the TE calculation was reported (left) and connectivity as unweighted was found by thresholding TE values with 0.7 (right).</p>
+
+<p><img class="left" src="/C-PAC/images/TE_mean.png" width="300" height="300" title="image" alt="image">
+<img class="right" src="/C-PAC/images/TE_conn.png" width="400" height="400" title="image" alt="image"></p>
+
+<h2><strong>Phase synchronization and PLV</strong></h2>
+
+<p>As explained las week, we can obtain the analytical signals using the Hilbert transform. This analytic signal represents a signal in the time domain as a rotating vector with an instantaneous phase, phi(t), and amplitude.</p>
+
+<p>The global level of phase synchrony is given by the parameter R(t), after calculating the modulus of the phase, taking values in the [0,1] range (being 0 completely asynchroneous and 1 completely synchronized, respectively):</p>
+
+<p><img class="center" src="/C-PAC/images/r_param.png" width="300" height="300" title="image" alt="image"></p>
+
+<p>Which, translated to python, is:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">phase_sync</span><span class="p">(</span><span class="n">X</span><span class="p">):</span> <span class="c"># Computes the PS_value as explained in Ponce et al. 2015</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">scipy.signal.signaltools</span> <span class="kn">as</span> <span class="nn">sigtool</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">htx</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># This converts (real, imag) to an angle</span>
+</span><span class='line'>    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">htx</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c">#PS_value calculated with the module</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For quantifying the pairwise phase relation between two given brain regions (timeseries) <em>k</em> and <em>l</em>, Phase-Locking Value (PLV) has to be calculated as:</p>
+
+<p><img class="center" src="/C-PAC/images/plv.png" width="300" height="300" title="image" alt="image"></p>
+
+<p>Again, translated to python:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">PLV</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">scipy.signal.signaltools</span> <span class="kn">as</span> <span class="nn">sigtool</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">htx</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">hty</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">htx</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">hty</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">psi</span> <span class="o">=</span> <span class="n">px</span> <span class="o">-</span> <span class="n">py</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c">#PLV_value calculated with the module</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Some examples with regard of phase synchronization measures will be shown in the next entry of the blog.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1416,6 +1575,10 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">New Measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization/">Towards Frequency Domain Analysis and Phase Synchronization</a>
       </li>
     
@@ -1429,10 +1592,6 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
     
       <li class="post">
         <a href="/C-PAC/blog/2015/05/28/workflows-working-correlation-and-mutual-information/">Workflows Working: Correlation and Mutual Information</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/05/26/coding-has-begun/">Coding Has Begun!</a>
       </li>
     
   </ul>
