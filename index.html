@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="This week we have been centered in developing new measures for C-PAC. The first one, Transfer Entropy, is related to the first measures we did ( &hellip;">
+  <meta name="description" content="The Hilbert Transform is a linear operator which takes a function, u(t), and produces a function, H(u)(t), with the same domain. In python, we can &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,78 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Some Examples With Phase Synchrony Measures</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-18T15:02:43+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:02 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The <a href="https://en.wikipedia.org/wiki/Hilbert_transform">Hilbert Transform</a> is a linear operator which takes a function, u(t), and produces a function, H(u)(t), with the same domain.</p>
+
+<p>In python, we can compute the <a href="http://en.wikipedia.org/wiki/Analytic_signal">analytic signal</a>, using the Hilbert transform. This analytic signal is used for many things, like computing the envelope of a signal or the instantaneous phase of the signal.
+Our calculation of the instantaneous phase is in the range [0,1], computed over the cos() function of the angle of the Hilbert Transform coefficients.
+We have choosen a random signal of an fMRI file to show the example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">env</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">ht</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span> <span class="c"># instantaneous phase</span>
+</span><span class='line'><span class="n">inst_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c"># modulus of the angle in [0,1]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="center" src="/C-PAC/images/signal_env.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>With this instantaneous phase, we can code easyly the two functions that were shown in the previous post, the Phase Synchronization parameter and the Phase Locking Value. For visualization purposes, here is shown a good example of three signals, the first one is from a region far from the other ones. The last two signals are in regions close to another (it is supposed they will be more synchronized between them than with the first one, which is distant).</p>
+
+<p><img class="center" src="/C-PAC/images/signals_phase.png" width="500" height="500" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/signals_phase2.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>The PLV values, validating our initial hypothesis, are the following:</p>
+
+<ul>
+<li>PLV(S1,S2) = 0.43</li>
+<li>PLV(S1,S3) = 0.41</li>
+<li>PLV(S2,S3) = 0.86</li>
+</ul>
+
+
+<p>The PLV values for the 90 regions for a particular random subject of our dataset is shown in the next picture:</p>
+
+<p><img class="center" src="/C-PAC/images/PLV_mat.png" width="350" height="350" title="image" alt="image"></p>
+
+<p>Which unveils similar structures to the ones got with TE, MI and Correlations.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1528,41 +1600,9 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/08/Hello-World/">First Post - Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
-</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/C-PAC/posts/2">&larr; Older</a>
     
     <a href="/C-PAC/blog/archives">Blog Archives</a>
     
@@ -1573,6 +1613,10 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Some Examples With Phase Synchrony Measures</a>
+      </li>
     
       <li class="post">
         <a href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">New Measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a>
@@ -1588,10 +1632,6 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
     
       <li class="post">
         <a href="/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Analyzing Correlations, Entropies and Causalities on Brain Data</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/05/28/workflows-working-correlation-and-mutual-information/">Workflows Working: Correlation and Mutual Information</a>
       </li>
     
   </ul>

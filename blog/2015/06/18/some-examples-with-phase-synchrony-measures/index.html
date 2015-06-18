@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>First Post - Hello World - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <title>Some Examples With Phase Synchrony Measures - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="1
-2
-print &#39;Hello World!&#39;
-print &#39;Kaixo Mundua!&#39; ">
+  <meta name="description" content="The Hilbert Transform is a linear operator which takes a function, u(t), and produces a function, H(u)(t), with the same domain. In python, we can &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ print &#39;Kaixo Mundua!&#39; ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/">
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">
   <link href="/C-PAC/favicon.png" rel="icon">
   <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
@@ -71,7 +68,7 @@ print &#39;Kaixo Mundua!&#39; ">
   
   <header>
     
-      <h1 class="entry-title">First Post - Hello World</h1>
+      <h1 class="entry-title">Some Examples With Phase Synchrony Measures</h1>
     
     
       <p class="meta">
@@ -80,19 +77,57 @@ print &#39;Kaixo Mundua!&#39; ">
 
 
 
-<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
+<time class='entry-date' datetime='2015-06-18T15:02:43+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:02 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
-</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
+<div class="entry-content"><p>The <a href="https://en.wikipedia.org/wiki/Hilbert_transform">Hilbert Transform</a> is a linear operator which takes a function, u(t), and produces a function, H(u)(t), with the same domain.</p>
+
+<p>In python, we can compute the <a href="http://en.wikipedia.org/wiki/Analytic_signal">analytic signal</a>, using the Hilbert transform. This analytic signal is used for many things, like computing the envelope of a signal or the instantaneous phase of the signal.
+Our calculation of the instantaneous phase is in the range [0,1], computed over the cos() function of the angle of the Hilbert Transform coefficients.
+We have choosen a random signal of an fMRI file to show the example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">env</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">ht</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span> <span class="c"># instantaneous phase</span>
+</span><span class='line'><span class="n">inst_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c"># modulus of the angle in [0,1]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="center" src="/C-PAC/images/signal_env.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>With this instantaneous phase, we can code easyly the two functions that were shown in the previous post, the Phase Synchronization parameter and the Phase Locking Value. For visualization purposes, here is shown a good example of three signals, the first one is from a region far from the other ones. The last two signals are in regions close to another (it is supposed they will be more synchronized between them than with the first one, which is distant).</p>
+
+<p><img class="center" src="/C-PAC/images/signals_phase.png" width="500" height="500" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/signals_phase2.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>The PLV values, validating our initial hypothesis, are the following:</p>
+
+<ul>
+<li>PLV(S1,S2) = 0.43</li>
+<li>PLV(S1,S3) = 0.41</li>
+<li>PLV(S2,S3) = 0.86</li>
+</ul>
+
+
+<p>The PLV values for the 90 regions for a particular random subject of our dataset is shown in the next picture:</p>
+
+<p><img class="center" src="/C-PAC/images/PLV_mat.png" width="350" height="350" title="image" alt="image"></p>
+
+<p>Which unveils similar structures to the ones got with TE, MI and Correlations.</p>
 </div>
 
 
@@ -108,7 +143,7 @@ print &#39;Kaixo Mundua!&#39; ">
 
 
 
-<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
+<time class='entry-date' datetime='2015-06-18T15:02:43+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:02 pm</span></time>
       
 
 
@@ -116,7 +151,7 @@ print &#39;Kaixo Mundua!&#39; ">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/" >Tweet</a>
   
   
   
@@ -125,8 +160,8 @@ print &#39;Kaixo Mundua!&#39; ">
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/" title="Previous Post: New measures: Transfer Entropy, Phase Synchronization and Phase Locking Value">&laquo; New measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a>
       
-        <a class="basic-alignment right" href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/" title="Next Post: First scripts for C-PAC: this is just the beginning">First scripts for C-PAC: this is just the beginning &raquo;</a>
       
     </p>
   </footer>
@@ -221,8 +256,8 @@ print &#39;Kaixo Mundua!&#39; ">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/';
-        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/';
+        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/';
+        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/';
         var disqus_script = 'embed.js';
       
     (function () {
