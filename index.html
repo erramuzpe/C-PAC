@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="The Hilbert Transform is a linear operator which takes a function, u(t), and produces a function, H(u)(t), with the same domain. In python, we can &hellip;">
+  <meta name="description" content="As we have reached the midterm of the project, I am writing this post as a summary of what we have achieved and which are our next objectives. Our &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,137 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/">Midterm Summary and Next Objectives</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-30T12:02:55+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:02 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As we have reached the midterm of the project, I am writing this post as a summary of what we have achieved and which are our next objectives. Our overall evaluation of our work is positive and we are excited about keep the coding and learning.</p>
+
+<h4><strong>Theory and discussion</strong></h4>
+
+<p>In one hand, we have been weekly discussing about the measures we had to implement, having debates about the information we could get from them and feasibility and practicality of these measures integrated in CPAC. Also, it has been a hard-work of researching and learning about new techniques and tools used in the field linked not only to measures related to non-linear analysis of the series, but also to a wide variety of preprocessing techniques, optimization and python language learning.</p>
+
+<h4><strong>Coding</strong></h4>
+
+<p>In the other hand, as a consequence of the previous point, we have accomplished the goal of implementing several measures, helper functions and tools building partially a toolbox for the analysis of non-linear information of series that will need triming and revision, on the principles of utility and complementarity. Organisation of these measures and outputs are also to come.</p>
+
+<p>I have developed 4 working workflows of measures based on correlation and Information Theory between pairs of variables (Ivan has developed others complementing my work):</p>
+
+<ul>
+<li>Correlation WF</li>
+<li>Partial Correlation WF</li>
+<li>Mutual Information WF</li>
+<li>Transfer Entropy WF</li>
+</ul>
+
+
+<p>Additionally, the toolbox has several measures and helper functions that allow us to extract information or perform treatments over series that still we have not translate them into workflows:</p>
+
+<ul>
+<li>Other measures:
+
+<ul>
+<li>Shannon entropy</li>
+<li>ApEn</li>
+<li>Conditional entropy</li>
+<li>Entropy Correlation Coefficient</li>
+<li>Phase synchronization</li>
+<li>Phase Locking Values</li>
+<li>Espectrum (Phase) Entropy</li>
+<li>TE based in covariances for gaussian variables (no need of discretization).</li>
+<li>Entropy Correlation Coefficient</li>
+</ul>
+</li>
+<li>Helper functions:
+
+<ul>
+<li>Voxel-wise timeseries generator from fMRI data</li>
+<li>ROI timeseries generator from fMRI data</li>
+<li>Transform (BIC discretization of signals based on Equiquantization criteria)</li>
+<li>Frequency filters</li>
+<li>Phase extractors</li>
+</ul>
+</li>
+</ul>
+
+
+<p>And also a Granger Causality (GC) module (Implementing Pairwise Conditional GC and MultiVariate GC using a VAR model) that still is under testing and bug-correcting phase with the following functions that can be found in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/mvgc.py">GitHub</a>:</p>
+
+<ul>
+<li>Granger Causality functions based on VAR model:
+
+<ul>
+<li>tsdata_to_autocov: Timeseries to autocovariance matrix calculation</li>
+<li>autocov_to_var: Calculation of the coefficients and the residuals using the VAR model.</li>
+<li>autocov_to_pwcgc: Calculation of the Pairwise Granger Causality using the residuals previously calculated.</li>
+<li>autocov_to_mvgc: Calculation of the Multivariate Granger Causality using the residuals previously calculated.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4><strong>Testing over real data</strong></h4>
+
+<p>Finally, there has been an application of the developed measures to real fMRI data, having reported some preliminary results. These results can be found in previous entries of this blog:</p>
+
+<p><a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Correlation, Entropies and Mutual Information</a>, <a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">Transfer Entropy</a> and <a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Phase Synchrony</a>.</p>
+
+<p>We are towards starting using extensively the Ncorr database for real data usage with the measures and stablish the use of new atlases to extend the 90 ROIs that we have been working with to 512 or/and 1024 regions. Also, our intention is to find new ways of representing our results. An idea of how we could represent our matrices in a space that we already know is explained <a href="http://wiki.biac.duke.edu/biac:analysis:resting_pipeline">here</a>, by taking correlation matrixes (could be any other measure&rsquo;s bi-directional results matrix) and generating figures like these:</p>
+
+<p><img class="left" src="http://wiki.biac.duke.edu/_media/biac:analysis:3d_functionalconnectome.png?cache=&w=900&h=738&tok=7a2a44" width="350" height="350" title="image" alt="image"></p>
+
+<p><img class="center" src="http://wiki.biac.duke.edu/_media/biac:analysis:2d_functionalconnectome.png?w=400&h=442&tok=5ee755" width="300" height="350" title="image" alt="image"></p>
+
+<hr />
+
+<h2><strong>Next objectives</strong></h2>
+
+<p>Even if we are successfully completing our initial plan, we have still work to do:</p>
+
+<p><img class="center" src="/C-PAC/images/calendar_midterm.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>After having summarized what we have done so far until the present moment, I would like to point some TO-DO&rsquo;s and objectives towards the second (and last) part of the project.</p>
+
+<ul>
+<li>Merging of both students repositories and having a copy of it in a cluster, allowing running studies on it.</li>
+<li>Solve code problems and developer strategies alike to CPAC already existing code (efficiency and some errors in measures).</li>
+<li>Work on the integration with CPAC (GUI building).</li>
+<li>Keep following the initial plan: Cross-entropies, Fingerprints and Avalanche-point process measures. Discuss extensively about features to add, most relevant measures and future aplications over real data.</li>
+<li>Implement measures of multiscale dynamics .</li>
+<li>We have now a primitive and easy version of calculating the numbers of bins via Equantization. We are discussing more advanced methods to do it and it is likely to develop an alternative.</li>
+<li>Related to frecuencies (develop using what we already have as a base):
+
+<ul>
+<li>Implement Phase Entropy and Sample Entropies.</li>
+<li>Fingerprints -> Determine important frequencies. Use of the power spectrum.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1394,212 +1525,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/">First Scripts for C-PAC: This Is Just the Beginning</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-08T15:40:53+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:40 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In this blog I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users) to calculate some measures over non-linear fMRI timeseries and integrate them in a workflow. Our aim is to extend and improve C-PAC&rsquo;s features.</p>
-
-<p>In this first post I will try to explain some of what I have done for my first two scripts for C-PAC as my first contact with C-PAC. I would like to learn a lot about C-PAC&rsquo;s structure, workflows etc. and give back too. The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
-
-<p>In order to learn from <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw a <a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">question</a> on cross correlations and though it could be a good exercise to try possibilities (out of using other available utils like FSLcc) and afterwards, I also made the calculation for Transfer Entropy (TE) Granger Causality (GC)). As a short description, these 2 scripts calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
-
-<p>My code is in the copy I <a href="https://github.com/erramuzpe/C-PAC">forked</a>, in a new branch called <a href="https://github.com/erramuzpe/C-PAC/tree/series_mod">series_mod</a>. I saved my scripts in a folder of the same name.</p>
-
-<p>We have got here 3 files, <em><em>init</em> _ </em>.py<em>, </em>series_mod.py<em> and </em>utils.py_ .
-I used these three files from a template of other toolbox in C-PAC. <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/series_mod.py"><em>series_mod.py</em></a> generates the workflows:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">create_corr</span><span class="p">():</span>
-</span><span class='line'>    <span class="n">corr</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Workflow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;corr&#39;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">inputNode</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">IdentityInterface</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span>
-</span><span class='line'>                                                <span class="s">&#39;in_file&#39;</span><span class="p">,</span>
-</span><span class='line'>                                                <span class="s">&#39;mask&#39;</span><span class="p">,</span>
-</span><span class='line'>                                                <span class="s">&#39;TR&#39;</span>
-</span><span class='line'>                                                <span class="p">]),</span>
-</span><span class='line'>                        <span class="n">name</span><span class="o">=</span><span class="s">&#39;inputspec&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">outputNode</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">IdentityInterface</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span>
-</span><span class='line'>                                                    <span class="s">&#39;corr_mat&#39;</span><span class="p">]),</span>
-</span><span class='line'>                        <span class="n">name</span><span class="o">=</span><span class="s">&#39;outputspec&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">corr_mat</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">input_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;in_file&#39;</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="s">&#39;TR&#39;</span><span class="p">],</span>
-</span><span class='line'>                                   <span class="n">output_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;out_file&#39;</span><span class="p">],</span>
-</span><span class='line'>                     <span class="n">function</span><span class="o">=</span><span class="n">compute_corr</span><span class="p">),</span>
-</span><span class='line'>                     <span class="n">name</span><span class="o">=</span><span class="s">&#39;corr_mat&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;in_file&#39;</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;in_file&#39;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;TR&#39;</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;TR&#39;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;out_file&#39;</span><span class="p">,</span>
-</span><span class='line'>                 <span class="n">outputNode</span><span class="p">,</span> <span class="s">&#39;corr_mat&#39;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">corr</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There are 3 input parameters; fMRI series, the ROI-mask and TR of the fMRI. This function makes use of the functions in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py"><em>utils.py</em></a>. Let&rsquo;s see part of the code (present in my repo):</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_corr</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">TR</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="sd">    Computes the Network Correlation Matrix for ROIs in the mask</span>
-</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-</span><span class='line'>    <span class="kn">from</span> <span class="nn">matplotlib.mlab</span> <span class="kn">import</span> <span class="n">csv2rec</span>
-</span><span class='line'>    <span class="kn">from</span> <span class="nn">cpac.timeseries</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">#Import the time-series objects:</span>
-</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.timeseries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
-</span><span class='line'>    <span class="c">#Import the analysis objects:</span>
-</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.analysis</span> <span class="kn">import</span> <span class="n">CorrelationAnalyzer</span>
-</span><span class='line'>    <span class="c">#Import utility functions:</span>
-</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.utils</span> <span class="kn">import</span> <span class="n">percent_change</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">output_type</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">,</span><span class="bp">False</span><span class="p">]</span> <span class="c">#list of boolean for csv and npz file formats</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span>
-</span><span class='line'>    <span class="c">#from this files gen_roi_timeseries</span>
-</span><span class='line'>    <span class="c">#once we have the time series:</span>
-</span><span class='line'>    <span class="n">data_rec</span> <span class="o">=</span> <span class="n">csv2rec</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">#Extract information:</span>
-</span><span class='line'>    <span class="n">roi_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_rec</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">data_rec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">#Make an empty container for the data</span>
-</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">roi_names</span><span class="p">),</span> <span class="n">n_samples</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">for</span> <span class="n">n_idx</span><span class="p">,</span> <span class="n">roi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">roi_names</span><span class="p">):</span>
-</span><span class='line'>        <span class="n">data</span><span class="p">[</span><span class="n">n_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_rec</span><span class="p">[</span><span class="n">roi</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">#Normalize the data:</span>
-</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">percent_change</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">T</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="n">TR</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">T</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s">&#39;roi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi_names</span>
-</span><span class='line'>    <span class="c">#Initialize the correlation analyzer</span>
-</span><span class='line'>    <span class="n">C</span> <span class="o">=</span> <span class="n">CorrelationAnalyzer</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">## IN CASE WE WOULD LIKE TO ADD A THRESHOLD FEATURE (set inside the function</span>
-</span><span class='line'>    <span class="c"># or from input)</span>
-</span><span class='line'>    <span class="c"># C.corrcoef[C.corrcoef&lt;0.7] = 0</span>
-</span><span class='line'>    <span class="k">return</span>  <span class="n">C</span><span class="o">.</span><span class="n">corrcoef</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It is a trivial computation after extracting the time-series. This data could have been treated or filtered, but this first scripts were just to train myself with the repo, python, nypipe workflows etc. .</p>
-
-<p>I started from my own implementations in python, but also took some of this code and ideas from these tutorials:</p>
-
-<p>[1] <a href="http://nipy.org/nitime/examples/resting_state_fmri.html">http://nipy.org/nitime/examples/resting_state_fmri.html</a></p>
-
-<p>[2] <a href="http://nipy.org/nitime/examples/granger_fmri.html">http://nipy.org/nitime/examples/granger_fmri.html</a></p>
-
-<p>The result for the correlation when making calculations on preprocessed data of 3mm voxel-size and a mask of 90 ROIs parcellation is</p>
-
-<p><img class="left" src="/C-PAC/images/result.png" width="350" height="350" title="image" alt="image"></p>
-
-<p>I will discuss about the measures we are going to work on in the next post.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/C-PAC/posts/2">&larr; Older</a>
@@ -1615,6 +1540,10 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/">Midterm Summary and Next Objectives</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Some Examples With Phase Synchrony Measures</a>
       </li>
     
@@ -1628,10 +1557,6 @@ I used these three files from a template of other toolbox in C-PAC. <a href="htt
     
       <li class="post">
         <a href="/C-PAC/blog/2015/06/10/multivariate-granger-causality-in-python-for-fmri-timeseries-analysis/">Multivariate Granger Causality in Python for fMRI Timeseries Analysis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Analyzing Correlations, Entropies and Causalities on Brain Data</a>
       </li>
     
   </ul>

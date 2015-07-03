@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-06-18T16:44:36+02:00</updated>
+  <updated>2015-07-03T16:41:32+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -12,6 +12,117 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Midterm Summary and Next Objectives]]></title>
+    <link href="http://erramuzpe.github.io/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/"/>
+    <updated>2015-06-30T12:02:55+02:00</updated>
+    <id>http://erramuzpe.github.io/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives</id>
+    <content type="html"><![CDATA[<p>As we have reached the midterm of the project, I am writing this post as a summary of what we have achieved and which are our next objectives. Our overall evaluation of our work is positive and we are excited about keep the coding and learning.</p>
+
+<h4><strong>Theory and discussion</strong></h4>
+
+<p>In one hand, we have been weekly discussing about the measures we had to implement, having debates about the information we could get from them and feasibility and practicality of these measures integrated in CPAC. Also, it has been a hard-work of researching and learning about new techniques and tools used in the field linked not only to measures related to non-linear analysis of the series, but also to a wide variety of preprocessing techniques, optimization and python language learning.</p>
+
+<h4><strong>Coding</strong></h4>
+
+<p>In the other hand, as a consequence of the previous point, we have accomplished the goal of implementing several measures, helper functions and tools building partially a toolbox for the analysis of non-linear information of series that will need triming and revision, on the principles of utility and complementarity. Organisation of these measures and outputs are also to come.</p>
+
+<p>I have developed 4 working workflows of measures based on correlation and Information Theory between pairs of variables (Ivan has developed others complementing my work):</p>
+
+<ul>
+<li>Correlation WF</li>
+<li>Partial Correlation WF</li>
+<li>Mutual Information WF</li>
+<li>Transfer Entropy WF</li>
+</ul>
+
+
+<p>Additionally, the toolbox has several measures and helper functions that allow us to extract information or perform treatments over series that still we have not translate them into workflows:</p>
+
+<ul>
+<li>Other measures:
+
+<ul>
+<li>Shannon entropy</li>
+<li>ApEn</li>
+<li>Conditional entropy</li>
+<li>Entropy Correlation Coefficient</li>
+<li>Phase synchronization</li>
+<li>Phase Locking Values</li>
+<li>Espectrum (Phase) Entropy</li>
+<li>TE based in covariances for gaussian variables (no need of discretization).</li>
+<li>Entropy Correlation Coefficient</li>
+</ul>
+</li>
+<li>Helper functions:
+
+<ul>
+<li>Voxel-wise timeseries generator from fMRI data</li>
+<li>ROI timeseries generator from fMRI data</li>
+<li>Transform (BIC discretization of signals based on Equiquantization criteria)</li>
+<li>Frequency filters</li>
+<li>Phase extractors</li>
+</ul>
+</li>
+</ul>
+
+
+<p>And also a Granger Causality (GC) module (Implementing Pairwise Conditional GC and MultiVariate GC using a VAR model) that still is under testing and bug-correcting phase with the following functions that can be found in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/mvgc.py">GitHub</a>:</p>
+
+<ul>
+<li>Granger Causality functions based on VAR model:
+
+<ul>
+<li>tsdata_to_autocov: Timeseries to autocovariance matrix calculation</li>
+<li>autocov_to_var: Calculation of the coefficients and the residuals using the VAR model.</li>
+<li>autocov_to_pwcgc: Calculation of the Pairwise Granger Causality using the residuals previously calculated.</li>
+<li>autocov_to_mvgc: Calculation of the Multivariate Granger Causality using the residuals previously calculated.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4><strong>Testing over real data</strong></h4>
+
+<p>Finally, there has been an application of the developed measures to real fMRI data, having reported some preliminary results. These results can be found in previous entries of this blog:</p>
+
+<p><a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Correlation, Entropies and Mutual Information</a>, <a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">Transfer Entropy</a> and <a href="http://erramuzpe.github.io/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Phase Synchrony</a>.</p>
+
+<p>We are towards starting using extensively the Ncorr database for real data usage with the measures and stablish the use of new atlases to extend the 90 ROIs that we have been working with to 512 or/and 1024 regions. Also, our intention is to find new ways of representing our results. An idea of how we could represent our matrices in a space that we already know is explained <a href="http://wiki.biac.duke.edu/biac:analysis:resting_pipeline">here</a>, by taking correlation matrixes (could be any other measure&rsquo;s bi-directional results matrix) and generating figures like these:</p>
+
+<p><img class="left" src="http://wiki.biac.duke.edu/_media/biac:analysis:3d_functionalconnectome.png?cache=&w=900&h=738&tok=7a2a44" width="350" height="350" title="image" alt="image"></p>
+
+<p><img class="center" src="http://wiki.biac.duke.edu/_media/biac:analysis:2d_functionalconnectome.png?w=400&h=442&tok=5ee755" width="300" height="350" title="image" alt="image"></p>
+
+<hr />
+
+<h2><strong>Next objectives</strong></h2>
+
+<p>Even if we are successfully completing our initial plan, we have still work to do:</p>
+
+<p><img class="center" src="http://erramuzpe.github.io/C-PAC/images/calendar_midterm.png" width="500" height="500" title="image" alt="image"></p>
+
+<p>After having summarized what we have done so far until the present moment, I would like to point some TO-DO&rsquo;s and objectives towards the second (and last) part of the project.</p>
+
+<ul>
+<li>Merging of both students repositories and having a copy of it in a cluster, allowing running studies on it.</li>
+<li>Solve code problems and developer strategies alike to CPAC already existing code (efficiency and some errors in measures).</li>
+<li>Work on the integration with CPAC (GUI building).</li>
+<li>Keep following the initial plan: Cross-entropies, Fingerprints and Avalanche-point process measures. Discuss extensively about features to add, most relevant measures and future aplications over real data.</li>
+<li>Implement measures of multiscale dynamics .</li>
+<li>We have now a primitive and easy version of calculating the numbers of bins via Equantization. We are discussing more advanced methods to do it and it is likely to develop an alternative.</li>
+<li>Related to frecuencies (develop using what we already have as a base):
+
+<ul>
+<li>Implement Phase Entropy and Sample Entropies.</li>
+<li>Fingerprints -> Determine important frequencies. Use of the power spectrum.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Some Examples With Phase Synchrony Measures]]></title>
