@@ -4,7 +4,7 @@
   <title><![CDATA[BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC]]></title>
   <link href="http://erramuzpe.github.io/C-PAC/atom.xml" rel="self"/>
   <link href="http://erramuzpe.github.io/C-PAC/"/>
-  <updated>2015-07-06T08:17:28+02:00</updated>
+  <updated>2015-07-06T16:12:38+02:00</updated>
   <id>http://erramuzpe.github.io/C-PAC/</id>
   <author>
     <name><![CDATA[github.com/erramuzpe]]></name>
@@ -47,7 +47,6 @@
 <li>Entropy Correlation Coefficient</li>
 <li>Phase synchronization (as explained in my last entry)</li>
 <li>Phase Locking Values</li>
-<li>Spectrum (Phase) Entropy</li>
 <li>TE based in covariances for gaussian variables (no need of discretization).</li>
 <li>Entropy Correlation Coefficient</li>
 <li>Helper functions:
@@ -112,7 +111,7 @@
 <li>Related to frecuencies (develop using what we already have as a base):
 
 <ul>
-<li>Implement Phase Entropy and Sample Entropies.</li>
+<li>Implement Sample Entropies.</li>
 <li>Fingerprints -> Determine important frequencies. Use of the power spectrum.</li>
 </ul>
 </li>
