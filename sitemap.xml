@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/</loc>
+    <lastmod>2015-07-15T12:24:57+02:00</lastmod>
+  </url>
+  <url>
+    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/</loc>
+    <lastmod>2015-07-09T11:23:22+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://erramuzpe.github.io/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/</loc>
     <lastmod>2015-06-30T12:02:55+02:00</lastmod>
   </url>

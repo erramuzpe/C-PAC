@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="As we have reached the midterm of the project, We are writing this post as a summary of what we have been working on and which are our next &hellip;">
+  <meta name="description" content="This week I have been trying to work with the migration of our modules to the GUI. For that, you will need to perform three main steps: Create the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,391 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-15T12:24:57+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This week I have been trying to work with the migration of our modules to the GUI. For that, you will need to perform three main steps:</p>
+
+<ul>
+<li>Create the interface for your modules (2 steps)
+
+<ul>
+<li>Define your space in the main configuration window tree. (Name your module/submodules)</li>
+<li>Define a window with configuration options (inputs and output of your workflow basically) for each one of your modules/submodules. The main window of the module usually is referred to an html file explaining what this module does and how does it work.</li>
+</ul>
+</li>
+<li>Link the GUI with your workflows (1 step)
+
+<ul>
+<li>Link the configuration window of each of the submodules with the corresponding workflow through the pipeline module, allowing the execution of your workflows.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2><strong> Create the interface for your modules </strong></h2>
+
+<h4><strong> STEP 1 </strong></h4>
+
+<p>The interface for the modules needs to be created. This is done by adding your module structure to the main configuration tree (a bit of planification is needed before deciding how the module structure is going to be organized). The first 2 steps should be done in parallel, I choosed to create the tree structure first, because I thought it was better a up to bottom approach.</p>
+
+<p>First of all, you have to define your space in the <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/GUI/interface/windows/config_window.py">config_window</a> file, in the Class named &lsquo;Mybook&rsquo;.</p>
+
+<p>There, you can find all the module names that will be listed in the main left of the pipeline configuration window. As an example, I have added some lines at the end of the Class:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'>   <span class="bp">self</span><span class="o">.</span><span class="n">AddPage</span><span class="p">(</span><span class="n">page43</span><span class="p">,</span> <span class="s">&quot;CWAS&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddSubPage</span><span class="p">(</span><span class="n">page44</span><span class="p">,</span> <span class="s">&quot;CWAS Settings&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddPage</span><span class="p">(</span><span class="n">page45</span><span class="p">,</span> <span class="s">&quot;Group Analysis&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddSubPage</span><span class="p">(</span><span class="n">page46</span><span class="p">,</span> <span class="s">&quot;Group Analysis Settings&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>        <span class="c">### ADDED NEXT 3 LINES: 48 is my main module name. 49 and 50 submodules inside 48</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddPage</span><span class="p">(</span><span class="n">page48</span><span class="p">,</span> <span class="s">&quot;Non Linear TS Analysis&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddSubPage</span><span class="p">(</span><span class="n">page49</span><span class="p">,</span> <span class="s">&quot;Information Theory&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">AddSubPage</span><span class="p">(</span><span class="n">page50</span><span class="p">,</span> <span class="s">&quot;Causality&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is also important to add the name of your GUI Classes in the import at the beginning of the file. In the second step, these Classes will be defined.</p>
+
+<h4><strong> STEP 2 </strong></h4>
+
+<p>In this step the Classes that create your configuration pages must be created. Here, it will be defined a window with configuration options (inputs and output of your workflow basically) for each one of your modules/submodules. For this purpose, it is neccessary to create a new file in the <a href="https://github.com/FCP-INDI/C-PAC/tree/master/CPAC/GUI/interface/pages">&lsquo;pages&rsquo; directory</a>, other files can be used an example.</p>
+
+<p>The main window of the module (in our example the 48) is usually referred to an html file explaining what this module does and how does it work. If you don&rsquo;t have such file yet, you can leave it blank. For the rest of submodules, as CPAC&rsquo;s has its own framework built over <a href="http://www.wxpython.org/">wx</a>, we can choose between many specific buttons and data tpyes to add to our window:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">control</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span><span class="n">CHOICE_BOX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">TEXT_BOX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">COMBO_BOX</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">INT_CTRL</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">FLOAT_CTRL</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">DIR_COMBO_BOX</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">CHECKLIST_BOX</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">LISTBOX_COMBO</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">TEXTBOX_COMBO</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+</span><span class='line'>               <span class="n">CHECKBOX_GRID</span> <span class="o">=</span> <span class="mi">9</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">dtype</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span><span class="n">BOOL</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">STR</span><span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">NUM</span><span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">LBOOL</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">LSTR</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">LNUM</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">LOFL</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">COMBO</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+</span><span class='line'>             <span class="n">LDICT</span><span class="o">=</span> <span class="mi">8</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is an example of how it can be a GUI frame for our toolbox:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">class</span> <span class="nc">InformationTheory</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">ScrolledWindow</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">wx</span><span class="o">.</span><span class="n">ScrolledWindow</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">=</span> <span class="n">GenericClass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Information Theory Calculation Options&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Run Information Theory Measures&quot;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">control</span><span class="o">=</span><span class="n">control</span><span class="o">.</span><span class="n">CHOICE_BOX</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">name</span><span class="o">=</span><span class="s">&#39;runIT&#39;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="nb">type</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">LSTR</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">comment</span><span class="o">=</span><span class="s">&quot;Run Information Theory Measures&quot;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Off&quot;</span><span class="p">,</span><span class="s">&quot;On&quot;</span><span class="p">],</span>
+</span><span class='line'>                 <span class="n">wkf_switch</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Voxelwise / ROI extraction&quot;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">control</span><span class="o">=</span><span class="n">control</span><span class="o">.</span><span class="n">CHOICE_BOX</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">name</span><span class="o">=</span><span class="s">&#39;voxel_roi&#39;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="nb">type</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">LSTR</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">comment</span><span class="o">=</span><span class="s">&quot;Run Information Theory Measures voxelwise or after ROI timeseries             extraction&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Voxelwise&quot;</span><span class="p">,</span><span class="s">&quot;ROI&quot;</span><span class="p">,</span><span class="s">&quot;Voxelwise/ROI&quot;</span><span class="p">],</span>
+</span><span class='line'>                 <span class="n">wkf_switch</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;fMRI image&quot;</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">control</span><span class="o">=</span><span class="n">control</span><span class="o">.</span><span class="n">COMBO_BOX</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">name</span><span class="o">=</span><span class="s">&#39;input_image&#39;</span><span class="p">,</span>
+</span><span class='line'>                     <span class="nb">type</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">STR</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">comment</span><span class="o">=</span><span class="s">&quot;fMRI image for calculation&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Parcellation Mask&quot;</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">control</span><span class="o">=</span><span class="n">control</span><span class="o">.</span><span class="n">COMBO_BOX</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">name</span><span class="o">=</span><span class="s">&#39;input_mask&#39;</span><span class="p">,</span>
+</span><span class='line'>                     <span class="nb">type</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">STR</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">comment</span><span class="o">=</span><span class="s">&quot;Parcellation Mask if you want to calculate&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Measures:&quot;</span><span class="p">,</span>
+</span><span class='line'>                      <span class="c">#control = control.CHECKLISTBOX_COMBO,</span>
+</span><span class='line'>                      <span class="n">control</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">LISTBOX_COMBO</span><span class="p">,</span>
+</span><span class='line'>                      <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Measures&quot;</span><span class="p">,</span>
+</span><span class='line'>                      <span class="nb">type</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">LDICT</span><span class="p">,</span>
+</span><span class='line'>                      <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Entropy&#39;</span><span class="p">,</span> <span class="s">&#39;Conditional Entropy&#39;</span><span class="p">,</span><span class="s">&#39;Mutual Information&#39;</span><span class="p">,</span><span class="s">&#39;Transfer Entropy&#39;</span><span class="p">,</span><span class="s">&#39;Entropy Correlation Coefficient&#39;</span><span class="p">],</span>
+</span><span class='line'>                      <span class="n">comment</span> <span class="o">=</span> <span class="s">&quot;Select which IT measures to apply:</span><span class="se">\n</span><span class="s">&quot;</span>\
+</span><span class='line'>                                <span class="s">&quot;ent = Entropy</span><span class="se">\n</span><span class="s">&quot;</span>\
+</span><span class='line'>                                 <span class="s">&quot;condent = Conditional Entropy</span><span class="se">\n</span><span class="s">&quot;</span>\
+</span><span class='line'>                                 <span class="s">&quot;mi = Mutual Information</span><span class="se">\n</span><span class="s">&quot;</span>\
+</span><span class='line'>                                 <span class="s">&quot;te = Transfer Entropy</span><span class="se">\n</span><span class="s">&quot;</span>\
+</span><span class='line'>                                 <span class="s">&quot;ecc = Entropy Correlation Coefficient</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class='line'>                     <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span><span class="mi">120</span><span class="p">),</span>
+</span><span class='line'>                     <span class="n">combo_type</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Output Options &quot;</span><span class="p">,</span>
+</span><span class='line'>                      <span class="n">control</span><span class="o">=</span><span class="n">control</span><span class="o">.</span><span class="n">CHECKLIST_BOX</span><span class="p">,</span>
+</span><span class='line'>                      <span class="n">name</span><span class="o">=</span><span class="s">&quot;measure_options&quot;</span><span class="p">,</span>
+</span><span class='line'>                      <span class="nb">type</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">LBOOL</span><span class="p">,</span>
+</span><span class='line'>                      <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;CSV&#39;</span><span class="p">,</span> <span class="s">&#39;NUMPY&#39;</span><span class="p">,</span><span class="s">&#39;NIFTI&#39;</span><span class="p">],</span>
+</span><span class='line'>                      <span class="n">comment</span><span class="o">=</span><span class="s">&quot;By default, results are written as NIFTI files. Additional output formats are as a .csv spreadsheet or a Numpy array.&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">page</span><span class="o">.</span><span class="n">set_sizer</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">parent</span><span class="o">.</span><span class="n">get_page_list</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is important to update the <strong>init</strong> file of the folder &lsquo;pages&rsquo; to make the new file available and checking all the intermodule dependencies and imports.
+After doing these modifications, the modifications will be seen as long as the <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/GUI/mainUI.py">MainUI</a> file runs without problem.</p>
+
+<p>In the next figure, it can be seen how the example code is translated into the GUI:</p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI.png" width="800" height="800" title="image" alt="image"></p>
+
+<p>After completing your configuration, a YAML file will be created with the information provided into the different inputs.</p>
+
+<h2><strong> Link the GUI with your workflows </strong></h2>
+
+<h4><strong> STEP 3 </strong></h4>
+
+<p>This is probably the most important step along with having a good planification of the needs of the module. The objective here is to link the configuration window of each of the submodules with the corresponding workflow through the pipeline module and specifically the <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py">cpac_pipeline</a> file, allowing the execution of your workflows.</p>
+
+<p>First of all, it is needed to import the workflows into the file. After that, and having as a reference other workflow insertions, you can take the input data saved in the previous step from a <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/utils/configuration.py">Configuration object</a> called &lsquo;c&rsquo;. This ‘c’ variable is an abstract representation used to store the options for the pipeline configuration YAML. The use of the YAML file, allows users to load preconfigured files easily.
+The YAML was generated by the GUI in the previous step and it is reloaded back in by <a href="https://github.com/FCP-INDI/C-PAC/blob/afbc30e28e4c282847920119e922953690835d36/CPAC/pipeline/cpac_runner.py#L381">cpac_runner</a>  as a Configuration object (‘c’).  Finally, <em>cpac_runner.py</em> passes the Configuration object to <em>cpac_pipeline.py</em> as an argument.</p>
+
+<p>There is the need of checking if the inputs are correct (otherwise, raise an error message), create the workflow and give to it the inputs extracted from &lsquo;c&rsquo;.
+<em>cpac_pipeline.py</em> is where the Nipype workflow object for each pipeline strategy is constructed via flow control. We will want to add a code block similar to <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py#L3028-L3197">this</a>  in order to add the nonlinear time-series node to these workflows.  The functions will be encapsulated within nodes and connected to a workflow.</p>
+
+<p>Short example of how to manage the inputs:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'>    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">    Inserting NLTSA</span>
+</span><span class='line'><span class="sd">    Workflow</span>
+</span><span class='line'><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">new_strat_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="n">num_strat</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">runIT</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">strat</span> <span class="ow">in</span> <span class="n">strat_list</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="s">&#39;mi&#39;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">MEASURES</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">create_mi</span><span class="p">()</span>
+</span><span class='line'>            <span class="n">pipeline</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">in_file</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">input_image</span>
+</span><span class='line'>            <span class="n">pipeline</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">inputspec</span><span class="o">.</span><span class="n">mask_file</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">input_mask</span>
+</span><span class='line'>            <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">num_strat</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">strat_list</span> <span class="o">+=</span> <span class="n">new_strat_list</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After completing this last step, the new module of CPAC should be working.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/">Testing Over ADHD Patients Data</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-09T11:23:22+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:23 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This week we have been clarifying the issues involved on MVGC’s statistical model. Namely, the model to calculate the residuals that we use to measure the causality could be interpreted in a different way that we need to have well settled. Once we have identified the problem and clarified how this model should better be, we will shortly readdress and implement the experimentation done.</p>
+
+<h4>Testing on real datasets</h4>
+
+<p>We did our first systematic efforts to test workflows integrally with fMRI data and find if the results were coherent with the technique.</p>
+
+<h5>Materials and methods:</h5>
+
+<ul>
+<li>Data was used from the <a href="http://neurobureau.projects.nitrc.org/ADHD200/Introduction.html">ADHD200 initiative</a> as recommended . For this purpose, I selected the preprocessed NeuroImage dataset (4mm voxel size).</li>
+<li>Data sampling: After having downloaded the data, we ruled out several subjects from the study (left handed&hellip;), resulting in 34 total subjects and then they were classified in 2 main groups: Controls and ADHD patients (20/14).</li>
+<li>Image processing: I extracted the mean timeseries of this data using the cc400 and cc1000 masks and performed a test analysis. Corr, TE and MI  were computed over the series. Here I show resulting matrixes for the cc400 parcellation (results for cc1000 were similar).</li>
+</ul>
+
+
+<p><img class="right" src="/C-PAC/images/AD_400.png" width="400" height="400" title="image" alt="image"></p>
+
+<p>First numbers showed than calculating the mean CC, TE and MI matrices for each group, most of the measures were close to 0. The results for the 1000 ROI parcellation was similar. This is a behaviour that it was also shown for the YALE preprocessed subsample (ABIDE) that we have been using in previous attempts for these high parcellated masks.</p>
+
+<p>We tried a similar approach with the data already extracted for cc400 and TT parcellations and while cc400 showed same results as our self-extracted series (we can say that our extraction method works fine) the TT parcellated data showed the following structures:</p>
+
+<p><img class="left" src="/C-PAC/images/AD_400_TT.png" width="400" height="400" title="image" alt="image"></p>
+
+<p>One can visually appreciate slight changes in ADHD patients compared to controls. There is the need of further analyzing these results, but it is not the aim of this study. This result outlined the possibility that some parcellations are better suited for specific analyses, and that the ability of different ROI layouts to parcellate a brain, may impact on the capacity of extracting information from the dataset.</p>
+
+<p>Being the calculation of the measures the same for 90, 400 and 1000 regions, I can just visually appreciate clear structures in the parcellation of 90 regions (which does not actually say much about the data, that should be furtherly analyzed). This could have a major reason in the way that different parcellation masks are created. The measures were also tested over the same data in Matlab having the same results to test wheter our methods were correct or not.</p>
+
+<h4>Repository and invitation to collaborate</h4>
+
+<p>It was an important moment for us to be able to start interact on Github for two main reasons. Firstly, to be able to discuss and comment in a more applied way and have this in a single repository that everyone included on the complexity toolboxes could access (included CMI!). And secondly to have a repository that deployed on our cluster allow us to process large datasets to validate and document. This repository has unified on:</p>
+
+<p><a href="https://github.com/roijo/C-PAC_complexitytools">https://github.com/roijo/C-PAC_complexitytools</a></p>
+
+<p>Similarly, knowing well ADHD200 and ABIDE (CORR is also there) was a necessary task to do that we are doing in common.</p>
+
+<p>Finally, I have added a slightly modificated function used in a previous work by Cameron, that saves the results into a Nifti file, making it easier to keep the results and export them.</p>
+
+<hr />
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1306,221 +1691,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/22/bonding-period-discussion-measures-to-work-with/">Notes From the Bonding Period and Discussion: Initial Plan of Implementation</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-22T10:15:01+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>10:15 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1 - Theoretical discussion:</strong></p>
-
-<p>During the Bonding Period, we have been discussiing some measures more thoroughly, thinking in the possible benefits that C-PAC could obtain of implementing and integrating them into a general toolkit around the ideas of . As a test period we have been working on some approaches and analysis tools.</p>
-
-<p><strong>2 - Collection of measures:</strong></p>
-
-<p>Determination of non-linear components, transient and singularities:</p>
-
-<ul>
-<li><p>Autocorrelation: Is the same approach as Granger Causality, but looking to lagged correlation values instead of coefficients. It gives a fast and reliable information about the series, being analyzed with itself.</p></li>
-<li><p>Entropies and information probabilistic content, partial correlations and sampling formalism (binarizing&hellip;)</p></li>
-<li><p>Cross correlation: Pairwise analysis of series looking for a direct correlation between them. The results obtained could be useful to analyze with graph-based methods.</p></li>
-</ul>
-
-
-<p>Granger Causality  is the term used to measure the ability of predicting the future values of a time series using past values of another time series. Unlike in Information Theory measures, it can be applied to the timeseries directly. We have in mind of developing two methods:</p>
-
-<ul>
-<li><p>Granger Causality Test: This test is a statistical hypothesis test for determining whether one time series is useful in forecasting another, using GC terms.</p></li>
-<li><p>Pairwise GC: This measure excludes the effect of other series in the GC calculation in the multivariate approach. It has a high computational demand.</p></li>
-</ul>
-
-
-<p>Some measures to be effective finding connectivity patterns that could be implemented:</p>
-
-<ul>
-<li><p>Avalanches: The importance of this measure relies on the observation that large-scale brain dynamics can be traced as discrete scale-free avalanches. The algorithm has some sub-phases that can be useful too:</p>
-
-<ul>
-<li>Point process analysis: Is the first step to avalanche calculation and also could be a good dimensionality reductor for other problems.</li>
-<li>Clustering and avalanche detection: There are already some clustering algorithms in CPAC that could be reused for this purpose.</li>
-</ul>
-</li>
-<li><p>Multi-fractal analysis, time scaling formalisms&hellip;:  Fractal processes, like trees or coastlines, are defined by self-similarity or power law scaling controlled by a single exponent, simply related to the box-counting dimension or Hurst exponent of the process. Multifractal processes, like turbulence, have more complex behaviours defined by a spectrum of possible local scaling behaviours or singularity exponents.</p></li>
-<li><p>Fingerprints:  A fingerprinting algorithm is a procedure that maps an arbitrarily large data item to a much shorter bit string. We are looking for fMRI suitable fingerprints such IC-fingerprints based on frequency analysis or structural-fingerprints.</p></li>
-</ul>
-
-
-<p><strong>3 - Disscussion on implementation:</strong></p>
-
-<p>These measures will be furtherly discussed and how are they implemented will depend largely in the emerging ideas. Anyway, we have an improved timing (plan) for the project which we are translating into the workflow. In term of metrics: We will work each month in some of the blocks mentioned, having the fourth week reserved for testing over large datasets and code refining (efficiency improvements).</p>
-
-<p><img class="center" src="/C-PAC/images/calendar.png" width="700" height="700" title="image" alt="image"></p>
-
-<p>Moreover, our intention is to keep developing methods for C-PAC after the project period expires, since we are noticing that this can be a good opportunity of both learning and developing new methods.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/">Information Theory Based Measures and Some Advances</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-21T17:55:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>5:55 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>During the bonding period, very interesting discussions came across related to the measures we could develop during the project. As an initial exercise, I thought it could be interesting to test some basic <a href="https://en.wikipedia.org/wiki/Information_theory">Information Theory</a> based measures. Basically, I wanted to reproduce the calculation of <a href="https://en.wikipedia.org/wiki/Entropy_%28information_theory%29">Entropy</a> and the related measures shown in this image:</p>
-
-<p><img class="left" src="/C-PAC/images/entropy.png" width="350" height="350" title="image" alt="image"></p>
-
-<p>The calculation of the Entropy is quite straightforward, so I decided to test different implementations of some people and test them with the <a href="https://docs.python.org/2/library/timeit.html">timeit</a> module.</p>
-
-<p>It turned that among 4-5 different functions I found <a href="http://blog.biolab.si/2012/06/15/computing-joint-entropy-in-python/">this one</a> coded using numpy and allowing also the calculation of the  <a href="https://en.wikipedia.org/wiki/Joint_entropy">Joint Entropy</a> using itertools was the fastest by far.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">n_insctances</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span class='line'>    <span class="n">H</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">classes</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]):</span>
-</span><span class='line'>        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_insctances</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">for</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
-</span><span class='line'>            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">predictions</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">H</span> <span class="o">+=</span> <span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">H</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Having the basic blocks, I built the Conditional Entropy and Mutual Information easily:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">Hx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">Hxy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">MI</span> <span class="o">=</span> <span class="n">Hx</span> <span class="o">+</span> <span class="n">Hy</span> <span class="o">-</span> <span class="n">Hxy</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">MI</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nf">cond_entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">Hyx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">CE</span> <span class="o">=</span> <span class="n">Hyx</span> <span class="o">-</span> <span class="n">Hy</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">CE</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I proved the functions over small vectors and all the properties seemed to work well. In the other hand, I sorted out the loading of the fMRI files (that I was loading with an external function) and the calculation of the TR using just the NIFTI header using  <a href="http://nipy.org/nibabel/">nibabel</a>.</p>
-
-<p>The first time trying to calculate the Entropy voxel-wise (it took like 5 mins and used only 1 core, so this must be solved in <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py#L5880">some way</a> or <a href="https://docs.python.org/2/library/multiprocessing.html">another</a>) and over 90 timeseries extracted from a ROI-mask, I failed. As these measures are calculated over probability density functions, the data must be converted into &lsquo;states&rsquo;, binarized for example. This is another problem I have to solve: Dealing with fMRI datatypes and FSL functions. I still don&rsquo;t know how to make use directly of FSL utils (and neither about the different FSL options I have. This is a TO DO for my list).</p>
-
-<p>To solve the problem, I&rsquo;ve created my own timeseries extractor (generates a Numpy array, not a CSV file as in <em>gen_roi_timeseries</em>.<em>py</em>):</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'>    <span class="n">unit_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">datafile</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">datafile</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">unit_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
-</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;FAIL&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">unit_data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">roi_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n_samples</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c"># Be carefull with number of ROIs and np-arrays</span>
-</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-</span><span class='line'>        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span class='line'>            <span class="n">node_array</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">unit_data</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
-</span><span class='line'>            <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>            <span class="n">roi_data</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This structure can be used to extract all voxels timeseries as well. As work for the next week, this data has to be binarized to two (or more) &lsquo;states&rsquo; and then passed to the IT functions.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/C-PAC/posts/2">&larr; Older</a>
@@ -1536,6 +1706,14 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/">Testing Over ADHD Patients Data</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/">Midterm Summary and Next Objectives</a>
       </li>
     
@@ -1545,14 +1723,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
     
       <li class="post">
         <a href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">New Measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/06/11/towards-frequency-domain-analysis-phase-synchronization/">Towards Frequency Domain Analysis and Phase Synchronization</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/06/10/multivariate-granger-causality-in-python-for-fmri-timeseries-analysis/">Multivariate Granger Causality in Python for fMRI Timeseries Analysis</a>
       </li>
     
   </ul>
