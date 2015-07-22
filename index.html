@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="This week I have been trying to work with the migration of our modules to the GUI. For that, you will need to perform three main steps: Create the &hellip;">
+  <meta name="description" content="We are trying to converge to an easy and clear design of the GUI of our toolbox that integrates in CPAC’s structure and allows users to use it. We &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,79 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-22T12:24:57+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>12:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>We are trying to converge to an easy and clear design of the GUI of our toolbox that integrates in CPAC’s structure and allows users to use it. We are trying here to avoid redundant options in the workflow and it is becoming a quite difficult task, since we want the measures to be separated in differentiated subgroups, but at the same time, give the toolbox the possibility of using common functions (such as the extraction of the timeseries). It has to be non-redundant in this way, the most complicated thing will be the correct use of data structures (to take the ones that are already being generated from other modules in CPAC and to check if the series of a volume had been already extracted, in order to do not duplicate efforts). The design has to be generalizable enough that it can be used in other workflows.</p>
+
+<h2><strong> Planning of the GUI for NLTSA module  </strong></h2>
+
+<p>As the most important part of developing new software, it is always necessary to have a good developing plan. For the purpose of building the GUI for our toolbox, we have divided all our measures in 3 main groups:</p>
+
+<p>-Pre-Analysis measures: The ones that not correspond directly to NonLinearTimeSeriesAnalysis and can be applied directly into the extracted data. We can find here synchrony measures in time (correlation, partial correlation) and frequency domain (phase synchrony index, phase locking value). Also, treatment of fingerprints and ICA timeseries extraction are due to be added in this submodule.
+-Information Theory and Causality measures: The ones coming from the informative framework and causality. These measures involve the acquisition of information flow and sharing between variables (Mutual Information, Transfer Entropy, Granger Causality Toolbox measures (MVGC, PWCGC)).
+-Scale free dynamics measures: This is the box that make use of the most advanced measures (fractality, avalanches, detrended fluctuation analysis, Hurst exponents). These measures are still pending of being developed (planned for August), so we have still not decided about the inputs and the outputs they are generating.</p>
+
+<p>The schema shown above has been resumed in the next diagram. Most of the modules make use of other modules functions (we have tried to not being redundant with CPAC’s code). We have ensured that the helper functions developed for our toolbox are available also from outside our module.</p>
+
+<p><img class="center" src="/C-PAC/images/GUI_Diagram.png" width="800" height="800" title="image" alt="image"></p>
+
+<h2><strong> Implementation of the GUI </strong></h2>
+
+<p>Following the instructions published in the previous post, there has been straightforward to build up the 3 subgroups, as they are quite similar between each other. The most important feature for us was the possibility of calculating the measures independently (there is no need of calculating all of them, the user can choose whether to apply the different measures without restriction).</p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_1.png" width="800" height="800" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_2.png" width="800" height="800" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_3.png" width="800" height="800" title="image" alt="image"></p>
+
+<p>A serious work must be done in flow-controlling inside <em>cpac_pipeline.py</em> to avoid repeating the operations present in the submodules (mainly, timeseries generation. Once that are generated, there is no point in extracting them again). Also, it is important to have well connected the toolbox to the main CPAC’s workflow and check whether the data has been previously extracted. Maybe we can talk at some point soon about this and listen to developers thoughts, comments in the post will be very welcomed. Also, we left the door open for interesting modifications that could happen (the 3rd submodule is still pending of being coded and we have in mind to deal with visualization and data presentation). The whole integration will be held in the last week of GSoC with the help of all collaborators and students.</p>
+
+<h2><strong> Synchrony measures in ADHD data </strong></h2>
+
+<p>As we are trying not to evaluate all our measures together at the end, this week we have tried extensively our new dataset from ADHD200 (specific information about the dataset and how we  did our first experiment in previous post[link[).</p>
+
+<p>We had two measures to test over this data, “phase synchrony index” (which is a self-informative value about the synchrony level of a specific signal) and “phase locking value” (which is the relation between the synchronicity of 2 variables).</p>
+
+<p>We had two measures to test over this data, “phase synchrony index” or PSI (which is a self-informative value about the synchrony level of a specific signal) and “phase locking value” or PLV (which is the relation between the synchronicity of 2 variables).</p>
+
+<h4><strong> Results </strong></h4>
+
+<p>The PSI is a single variable measure, so it is just an self-informative measure. First results showed that the data extracted with the cc400 and cc1000 parcellations had a low synchrony level (some of them looked totally desynchronized). Overall, there was not much to say about differences between ADHD patients and controls.</p>
+
+<p>The PLV, however, showed that the synchrony between some of the signals was strong (>0.7). As these parcellations are randomly created and assigned, consecutive ROIs have not spatial relation and showing the usual matrixes was not going to be informative.</p>
+
+<h2><strong> Solved GC VAR model calculation </strong></h2>
+
+<p>We have changed the paradigm of measuring the residuals for the Granger Causality calculation. Instead of calculating the covariance matrix of the data, which was creating problems later with the VAR model, we have change this. Now, the residuals are calculated directly from the data (the regression model used was OLS using QR decomposition. Specifications in MVGC toolbox docs), without performing the calculation of the covariance matrix.</p>
+
+<p>We performed a small evaluation of the PWGC over our ADHD200 dataset and results were not visually different between groups. We are working in an appropriate way of showing results coming from these measures.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1509,188 +1582,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/26/coding-has-begun/">Coding Has Begun!</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-26T17:31:20+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:31 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Yesterday was the first day of coding of the program, I hope this summer to be a great learning period!</p>
-
-<p>We are now working in a first package of measures that allow us to do a preanalysis of the data and detect non-linear components. We are into measures like Autocorrelation, Entropies (lagged), frequency filtering and many more.</p>
-
-<p>Some problems with memory handling just arose, computing the voxel-wise correlation. We will discuss further how to solve this problem, but we found some solutions <a href="http://stackoverflow.com/questions/13044880/memory-efficient-storage-of-many-large-scipy-sparse-matrices">[1]</a> <a href="http://stackoverflow.com/questions/11002247/how-to-reduce-python-script-memory-usage">[2]</a> to start doing some research about this.</p>
-
-<p>I have added a new <a href="https://gist.github.com/fabianp/9396204419c7b638d38f">partial correlation</a> function developed by Fabian Pedregosa (the author of <a href="http://scikit-learn.org/stable/">Scikit-learn</a>), quite more demanding computationally than the simple correlation.</p>
-
-<p>I have improved the readability of the code and removed totally the calls to nitime  by using numpy.corrcoef to calculate the correlation over series. Also, I have cleaned the code and the user can choose between doing voxel-wise analysis or ROI-timeseries analysis with two new functions (probably I should name them differently, since CPACs already has functions named like that).</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">gen_voxel_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">):</span>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="sd">    Extracts voxelwise timeseries and return a np array with them.   </span>
-</span><span class='line'><span class="sd">    Parameters</span>
-</span><span class='line'><span class="sd">    ----------</span>
-</span><span class='line'><span class="sd">    in_file : nifti file</span>
-</span><span class='line'><span class="sd">        4D EPI File </span>
-</span><span class='line'><span class="sd">    Returns</span>
-</span><span class='line'><span class="sd">    -------</span>
-</span><span class='line'><span class="sd">    data_array =  voxel(x,y,z) * timepoints</span>
-</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-</span><span class='line'>    <span class="c">#print img_data.shape</span>
-</span><span class='line'>    <span class="p">(</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">)</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span>
-</span><span class='line'>    <span class="n">voxel_data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_x</span><span class="o">*</span><span class="n">n_y</span><span class="o">*</span><span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">return</span>  <span class="n">voxel_data_array</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">):</span>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="sd">    Extracts ROI timeseries and return a np array with them.    </span>
-</span><span class='line'>
-</span><span class='line'><span class="sd">    Parameters</span>
-</span><span class='line'><span class="sd">    ----------</span>
-</span><span class='line'><span class="sd">    in_file : nifti file</span>
-</span><span class='line'><span class="sd">        4D EPI File       </span>
-</span><span class='line'><span class="sd">    mask_file : nifti file</span>
-</span><span class='line'><span class="sd">        Mask of the EPI File(Only Compute Correlation of voxels in the mask)</span>
-</span><span class='line'><span class="sd">        Must be 3D    </span>
-</span><span class='line'><span class="sd">    Returns</span>
-</span><span class='line'><span class="sd">    -------</span>
-</span><span class='line'><span class="sd">    data_array = ROI_number * timepoints</span>
-</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">mask_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-</span><span class='line'>    <span class="c"># Cast as rounded-up integer</span>
-</span><span class='line'>    <span class="n">mask_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">mask_data</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">mask_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
-</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Invalid Shape Error.&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask_data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c">#quits the ROI number &#39;0&#39;</span>
-</span><span class='line'>    <span class="n">roi_data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span><span class="n">n_samples</span><span class="p">))</span>
-</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-</span><span class='line'>        <span class="n">node_array</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">mask_data</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
-</span><span class='line'>        <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">roi_data_array</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">return</span>  <span class="n">roi_data_array</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I have in mind the problem of how to save the data structure (&ldquo;timeseries * timepoints&rdquo; or &ldquo;timepoints * timeseries&rdquo;). I should ask this in the IRC, an agreement is necessary for building the functions that are going to use this data.</p>
-
-<p>I will finish this week with the Autocorrelation and Partial-Correlation implementation and testing. Coding these along with Transfer Entropy seem a good first week objective while putting into perspective of coding the points raised during discussion, such as:</p>
-
-<ul>
-<li><p>Type and properties of correlations and entropies to calculate (and how these describe the dimensionality of the data and complex patterns).</p></li>
-<li><p>Relation with frequency decomposition and pattern formation, we should extend discussion to Wavelets/Hurst spectrum.</p></li>
-<li><p>Identify useful elements for the fingerprint method (frequency bands).</p></li>
-</ul>
-
-
-<p>To do:</p>
-
-<ul>
-<li><p>First objective: work on models of correlation, entropies and discretisation, as well as their statistical properties (Also as recurrence, etc.)</p></li>
-<li><p>Discuss further the papers from points Cameron made. ECC seems to be a good measure to incorporate to the package.</p></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/C-PAC/posts/2">&larr; Older</a>
@@ -1706,6 +1597,10 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a>
       </li>
     
@@ -1719,10 +1614,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
     
       <li class="post">
         <a href="/C-PAC/blog/2015/06/18/some-examples-with-phase-synchrony-measures/">Some Examples With Phase Synchrony Measures</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/06/17/new-measures-transfer-entropy/">New Measures: Transfer Entropy, Phase Synchronization and Phase Locking Value</a>
       </li>
     
   </ul>
