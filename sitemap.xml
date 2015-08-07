@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/</loc>
+    <lastmod>2015-08-07T08:26:14+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/</loc>
     <lastmod>2015-07-22T12:24:57+02:00</lastmod>
   </url>

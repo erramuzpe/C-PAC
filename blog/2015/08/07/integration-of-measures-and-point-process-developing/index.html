@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Integration of Measures and Point Process Developing - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <meta name="author" content="github.com/erramuzpe">
+
+  
+  <meta name="description" content="We are heading the end of the quarter and our toolbox is starting to be mature, while we investigate the many links and uses between tools. This week &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/">
+  <link href="/C-PAC/favicon.png" rel="icon">
+  <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
+  <script src="/C-PAC/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/C-PAC/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/C-PAC/">BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</a></h1>
+  
+    <h2>Contributing to C-PAC</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/C-PAC/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="erramuzpe.github.io/C-PAC">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/C-PAC/">Blog</a></li>
+  <li><a href="/C-PAC/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Integration of Measures and Point Process Developing</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-07T08:26:14+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:26 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>We are heading the end of the quarter and our toolbox is starting to be mature, while we investigate the many links and uses between tools. This week we have gone through important steps (but at the same time ongoing discussions due to the rich materials produced at this stage). Two main new things we have done, beyond the polishing of previous tools and validating ongoing:</p>
+
+<ul>
+<li><p>The integration of the toolbox in CPAC&rsquo;s pipeline is almost complete. This has been a tough task to do, since the internals of CPAC are quite large, with many flows and structures, but the main idea is clear: The work to do is to link the inputs you get from the GUI and the data already calculated previously in other CPAC&rsquo;s modules with your workflows inputs and integrate them in the main pipeline.</p></li>
+<li><p>Point Process Analysis and Conditional Rate Maps calculation: Following the initial plan, we have developed some new methods to test the time scale side of the toolbox and while Supraja is progressing with multifractal analysis in parallel.</p></li>
+</ul>
+
+
+<p>Following the instructions in the paper of <a href="http://journal.frontiersin.org/article/10.3389/fphys.2012.00015/abstract">Tagliazucchi et al</a> (&ldquo;<em>Criticality in large-scale brain fMRI dynamics unveiled by a novel point process analysis</em>&rdquo;), we have been able to code the base point process approach followed of a Conditional Rate Map building as in the paper.</p>
+
+<p>And last, in terms of toolbox integration, new cross relationships have been looked at. Some of those are portrayed from our last model:</p>
+
+<p><img class="center" src="/C-PAC/images/GUI_Diagram2.png" width="600" height="600" title="image" alt="image"></p>
+
+<h2><strong> Integration of the toolbox in CPAC&rsquo;s pipeline  </strong></h2>
+
+<p>After carefully having explored the main pipeline, we realized that in order to not to repeat code and structures that are already developed, I had to make some changes in my initial workflows. At the beginning of the project, I coded them as independent workflows, with independent behaviour and inputs, and some helper functions that are already integrated in CPAC but that where necessary for me in that moment. Now, I have to link the data that would be already in CPAC, change the treatment of the inputs of my workflows and integrate them as a single tool.</p>
+
+<p>That will have effect too in the configuration of the GUI I proposed two weeks ago, being now more efficient. We have now all measures in a joint page of the GUI, having separated each of the main boxes of the initial plan in three different checkboxes with a common input. Also, the input data for my workflows will come from the TSE module of CPAC, which already makes these extractions. I have to modify my functions to work with 1D files (I have already the main code block built, since I already treated with this data type in the analysis of the 400 regions).</p>
+
+<p>In the main pipeline, I have inserted the NLTSA workflow:</p>
+
+<p><a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/pipeline/cpac_pipeline.py#L3207-L3368">https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/pipeline/cpac_pipeline.py#L3207-L3368</a></p>
+
+<p>It can be seen in the code that still are many things to change and improve, I am receiving crucial help from developers, to fully understand how the main pipeline works and transferring this knowledge to all discussions.</p>
+
+<p>The main structure at the moment, is a three block structure as previously proposed, plus the insert of qualities that measures derived from ergodic theory rely on. From these, I let the user to choose which one of them (the measures inside each of them) to calculate. I will change my workflows (I will have one per measure-box) and inside them, the measures will be called directly depending if they have been chosen by the user or not.</p>
+
+<h2><strong> Point Process Analysis and Conditional Rate Maps </strong></h2>
+
+<p>The technique can be easily described, extracted from the section  <em>Methods</em> of the paper:</p>
+
+<p><em>The point process is defined by the sequences of time points at which the BOLD signal crosses a given threshold from below. (&hellip;) To construct the conditional rates the point process is defined at a seed location and at the targets throughout the entire brain. The BOLD signal is extracted from a seed region (top trace) and the points (arrows and vertical dashed lines) are defined by the crossings at 1 SD (horizontal dashed lines). Every time the signal at a target region crosses the threshold (asterisks) up to 2 time steps later than in the seed, the rate at the target is increased in one unit. This rate is normalized by the number of points in the seed. The top panel shows the location of the seed and of the two example targets, as well as the resulting average conditional rates maps (left) and DMN obtained from PICA (right). Medium panels show the BOLD signal at the seed and at the two example target regions.</em></p>
+
+<p><img class="center" src="http://www.frontiersin.org/files/Articles/20422/fphys-03-00015-r2/image_m/fphys-03-00015-g006.jpg" width="600" height="600" title="image" alt="image"></p>
+
+<p>From that explanation a pair of functions have been developed:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="c"># Point process analysis for a signal. Values equal to 1 when the original value </span>
+</span><span class='line'><span class="c"># is higher than the threshold (1*SD)</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">point_process</span><span class="p">(</span><span class="n">signal</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">pp_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span class='line'>    <span class="n">th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">pp_signal</span><span class="p">[</span><span class="n">signal</span> <span class="o">&gt;</span> <span class="n">th</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">pp_signal</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="c"># Conditional Rate Map. Given an fMRI, extract timeseries, calculate Point Process</span>
+</span><span class='line'><span class="c"># and then the Rate Map for each voxel given a seed   </span>
+</span><span class='line'><span class="k">def</span> <span class="nf">cond_rm</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">seed_location</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Treat fMRI image</span>
+</span><span class='line'>    <span class="n">img</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="c">#print img.shape</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">(</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">)</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">))</span>
+</span><span class='line'>    <span class="c"># Extract seed and pp</span>
+</span><span class='line'>    <span class="n">seed_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">seed_location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">seed_location</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">seed_location</span><span class="p">[</span><span class="mi">2</span><span class="p">],:]</span>
+</span><span class='line'>    <span class="n">pp_seed_data</span> <span class="o">=</span> <span class="n">point_process</span><span class="p">(</span><span class="n">seed_data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">pp_seed_data</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># Calculate each PP signal</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">j_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_y</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">k_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_z</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">target_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">,:]</span>
+</span><span class='line'>                <span class="n">pp_target_data</span> <span class="o">=</span> <span class="n">point_process</span><span class="p">(</span><span class="n">target_data</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c"># LOGIC AND (target/seed) and count(signal == 1), that will give you the X/r parameter [0,1]</span>
+</span><span class='line'>                <span class="n">K</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">pp_seed_data</span><span class="p">,</span><span class="n">pp_target_data</span><span class="p">))</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Reconstruct the 3D volume</span>
+</span><span class='line'>    <span class="n">cond_rm_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&#39;cond_rm.nii.gz&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">img</span><span class="o">.</span><span class="n">to_filename</span><span class="p">(</span><span class="n">cond_rm_file</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">cond_rm_file</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As it can be seen, there is still a small change to be done in the CRM function. As described in the paper, the target point processed signal has to be checked in the same time point as the seed and up to 2 time steps later. As it can be derived from the image, is takes all the values crossing the threshold in a row just as one crossing. I would like to keep my function in a pythonic way and I don&rsquo;t find a way of computing the CRM without messing everything up with index checking to satisfy the requirements of the algorithm. Also, it would be desirable to know if the data already satisfies the requirements of z-scoring and HRF deconvolution as proposed in the paper and if this has effect on the algorithm results.</p>
+
+<p>From these calculations, we can start extracting volumes such as:</p>
+
+<p><img class="center" src="/C-PAC/images/CRM.png" width="800" height="800" title="image" alt="image"></p>
+
+<p>We are now discussing about the possibility of following the analysis by building the Clustering and the Avalanche detection, but they are not as well described in the paper and we have to make a evaluation of the time we have to finish the project.</p>
+
+<h2><strong> Relation between Correlation and CMR&rsquo;s number of point-wise events </strong></h2>
+
+<p>To make a comparison between the number of points that are necessary to reach a specific information level with the point process algorithm, we have used the correlation to identify highly synchronized timeseries. What we have done here is to build a relation between the synchrony of two variables and the point peaks that share each other after point processing them (CMR without normalizing).</p>
+
+<p>As an initial optimization we can find to which level point process transients can be translated to a point of criticality. This analysis has been produced at the voxel-wise level from ABIDE subjects, properly checked and preprocessed. Here, we can see how the increasing of the (mean) synchrony between two variables, increases the points that they share. This is a really nice finding, because it shows how point process can describe the change of regime associated with functional connectivity.</p>
+
+<p><img class="center" src="/C-PAC/images/corr_vs_points.png" width="400" height="400" title="image" alt="image"></p>
+
+<p>We can observe how once reached a threshold of 0.7 correlation point-processes can saturate giving a new quality to connectivity between regions.</p>
+
+<h2><strong> Others </strong></h2>
+
+<ul>
+<li><p>Even if the VAR model calculation was corrected in the previous week, there was still an issue
+with the calculation of <em>pwcgc()</em> , the internal loop has been already corrected. We have tested the function over data and looks to have the same performance as the original Matlab function. Different distributions of these will be last discussed if we can define more optimal models.</p></li>
+<li><p>We have been discussing about the need of visualization of some analysis inside and some statistics  CPAC (Pandas integration) . This is maybe a sore point that would be better to discuss with main developers.</p></li>
+<li><p>Next week we will follow our work with the integration, enforcement of criticality package and also we are into final integration of all our measures (phase measures integration with Scale Free Dynamics ones like DFA/Hurst exponent, for example).</p></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">github.com/erramuzpe</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-08-07T08:26:14+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:26 am</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/" title="Previous Post: Discussion and planning GUI for NLTSA and testing synchrony measures">&laquo; Discussion and planning GUI for NLTSA and testing synchrony measures</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/">Integration of Measures and Point Process Developing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/">Testing Over ADHD Patients Data</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/">Midterm Summary and Next Objectives</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/erramuzpe">@erramuzpe</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'erramuzpe',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/C-PAC/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - github.com/erramuzpe -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'toolsforcpac';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/';
+        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
