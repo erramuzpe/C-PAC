@@ -9,7 +9,7 @@
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="We are heading the end of the quarter and our toolbox is starting to be mature, while we investigate the many links and uses between tools. This week &hellip;">
+  <meta name="description" content="This week, as planned from the previous one, the integration has been extensively worked: the cpac_pipeline.py has now our workflow fully integrated &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,409 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/">Clustering and Avalanche Detection Algorithms [in PROGRESS]</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-14T13:10:51+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:10 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This week, as planned from the previous one, the integration has been extensively worked: the <em>cpac_pipeline.py</em> has now our workflow fully integrated and I have change the workflows into a single one, making it easier the call to the methods. Also, the treatment of the inputs has changed, since we are not making the extraction of the series anymore (another module of C-PAC is taking the responsibility). But more interestingly, we have enforced the Criticality package with the correction of the Point Process and Conditional Rate Mapping from the previous week and the developing of 2 new functions: Clustering and Avalanche detection algorithms.</p>
+
+<p>For this algorithms, we have also followed the headlines explained in the paper of <a href="http://journal.frontiersin.org/article/10.3389/fphys.2012.00015/abstract">Tagliazucchi et al</a> (&ldquo;<em>Criticality in large-scale brain fMRI dynamics unveiled by a novel point process analysis</em>&rdquo;), we have been able to extract Avalanches in the brain, wich opens a new perspective in the analysis of brain dynamics in C-PAC.</p>
+
+<h2><strong> Clustering Detection  </strong></h2>
+
+<p>The technique is described, extracted from the section  <em>Methods</em> of the paper, as:</p>
+
+<p><em>To detect contiguous clusters of activated voxels (defined as those crossing the threshold), for each time step, the problem was reduced to the detection of connected components in a suitably defined graph or network. More precisely, for each volume, a graph was constructed having each voxel as a node, and two nodes connected with a link if they were both activated (BOLD signal above 1 SD) and also first neighbors in the spatial sense. The connected components of this graph correspond to clusters of contiguous activated voxels isolated from other similarly defined clusters.</em></p>
+
+<p>The implementation of this approach was straightforward, but it has many checks to do, so it is an algorithm to code very carefully. It is a first draft of the algorithm and the purpose was to have a functional procedure asap. In future revisions, I will try to rewrite it in a more “pythonic way”.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="c"># Detects clusters after Point Processing a Brain </span>
+</span><span class='line'><span class="k">def</span> <span class="nf">cluster_detection</span><span class="p">(</span><span class="n">in_file</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.criticallity</span> <span class="kn">import</span> <span class="n">point_process</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Treat fMRI image</span>
+</span><span class='line'>    <span class="n">img</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">)</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Get the PP data</span>
+</span><span class='line'>    <span class="n">pp_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">j_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_y</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">k_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_z</span><span class="p">):</span>
+</span><span class='line'>                <span class="n">voxel_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">,:]</span>
+</span><span class='line'>                <span class="n">pp_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">point_process</span><span class="p">(</span><span class="n">voxel_data</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cluster_graph_data_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">t_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_t</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">time_slice</span> <span class="o">=</span> <span class="n">pp_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">cluster_graph_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">))</span>
+</span><span class='line'>        <span class="n">cluster_number</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_x</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">j_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_y</span><span class="p">):</span>
+</span><span class='line'>                <span class="k">for</span> <span class="n">k_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_z</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c"># is active, check if it has active neighboours</span>
+</span><span class='line'>                        <span class="k">if</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="ow">or</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                        <span class="ow">or</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="ow">or</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                        <span class="ow">or</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+</span><span class='line'>
+</span><span class='line'>                            <span class="k">if</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># if is not in any previous cluster</span>
+</span><span class='line'>                                <span class="n">this_cluster</span> <span class="o">=</span> <span class="p">(</span><span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="ow">or</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                                <span class="ow">or</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="ow">or</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                                <span class="ow">or</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>                                <span class="k">if</span> <span class="n">this_cluster</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#no neighbours in any previous cluster neither</span>
+</span><span class='line'>                                    <span class="n">this_cluster</span> <span class="o">=</span> <span class="n">cluster_number</span>
+</span><span class='line'>                                    <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                                    <span class="n">cluster_number</span> <span class="o">=</span> <span class="n">cluster_number</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>                                <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                                    <span class="c">#check cluster union</span>
+</span><span class='line'>                                    <span class="n">merge_clusters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">],</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                                <span class="p">,</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">],</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> \
+</span><span class='line'>                                <span class="p">,</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">+</span><span class="mi">1</span><span class="p">]])</span>
+</span><span class='line'>                                    <span class="n">merge_clusters</span> <span class="o">=</span> <span class="n">merge_clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c">#quit first value = 0</span>
+</span><span class='line'>
+</span><span class='line'>                                    <span class="n">this_cluster</span> <span class="o">=</span> <span class="n">merge_clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>                                    <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                                    <span class="k">for</span> <span class="n">cluster_to_merge</span> <span class="ow">in</span> <span class="n">merge_clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>                                        <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">cluster_graph_data</span> <span class="o">==</span> <span class="n">cluster_to_merge</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>                            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">this_cluster</span> <span class="o">=</span> <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>                            <span class="c">#find neighbours and give cluster_number</span>
+</span><span class='line'>                            <span class="k">if</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                            <span class="k">elif</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                            <span class="k">elif</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                            <span class="k">elif</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k_</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                            <span class="k">elif</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>                                <span class="n">cluster_graph_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_cluster</span>
+</span><span class='line'>                            <span class="k">elif</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">,</span><span class="n">k_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="c"># if not == 1¡, keep the search </span>
+</span><span class='line'>                        <span class="c"># if not neighbours, keep the search</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">cluster_graph_data_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_graph_data</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">cluster_graph_data_total</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><strong> Avalanche Detection </strong></h2>
+
+<p>The technique can be easily described, extracted from the section  <em>Methods</em> of the paper:</p>
+
+<p><em>The point process is defined by the sequences of time points at which the BOLD signal crosses a given threshold from below. (&hellip;) To construct the conditional rates the point process is defined at a seed location and at the targets throughout the entire brain. The BOLD signal is extracted from a seed region (top trace) and the points (arrows and vertical dashed lines) are defined by the crossings at 1 SD (horizontal dashed lines). Every time the signal at a target region crosses the threshold (asterisks) up to 2 time steps later than in the seed, the rate at the target is increased in one unit. This rate is normalized by the number of points in the seed. The top panel shows the location of the seed and of the two example targets, as well as the resulting average conditional rates maps (left) and DMN obtained from PICA (right). Medium panels show the BOLD signal at the seed and at the two example target regions.</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">avalanche_detec</span><span class="p">(</span><span class="n">cluster_file</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Treat fMRI image</span>
+</span><span class='line'>    <span class="n">img</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cluster_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cluster_data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">)</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">avalanche_id_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">avalanche_id_num</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">t_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_t</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">t_</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#if first timestep, all are candidates</span>
+</span><span class='line'>            <span class="n">time_slice</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">time_slice_fut</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">avalanche_id_now</span> <span class="o">=</span> <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">avalanche_id_fut</span> <span class="o">=</span> <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]:</span> <span class="c">#iterate over clusters</span>
+</span><span class='line'>                <span class="c"># NEW AVALANCHE CASE</span>
+</span><span class='line'>                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="p">:</span>
+</span><span class='line'>                    <span class="n">avalanche_id_now</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)]</span> <span class="o">=</span> <span class="n">avalanche_id_num</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>                        <span class="n">avalanche_id_fut</span><span class="p">[(</span><span class="n">time_slice_fut</span><span class="o">==</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">avalanche_id_num</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="n">avalanche_id_num</span> <span class="o">=</span> <span class="n">avalanche_id_num</span> <span class="o">+</span><span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span> <span class="o">=</span> <span class="n">avalanche_id_now</span>
+</span><span class='line'>                    <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">avalanche_id_fut</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">elif</span> <span class="n">t_</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">n_t</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c">#if not first timestep, check previous</span>
+</span><span class='line'>            <span class="k">print</span> <span class="n">t_</span>
+</span><span class='line'>            <span class="c">#time_slice_past = cluster_data[:,:,:,t_-1]</span>
+</span><span class='line'>            <span class="n">time_slice</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">time_slice_fut</span> <span class="o">=</span> <span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">avalanche_id_now</span> <span class="o">=</span> <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">avalanche_id_fut</span> <span class="o">=</span> <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_data</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>                <span class="c"># PREVIOUS AVALANCHE CASE</span>
+</span><span class='line'>                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">avalanche_id_now</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="n">this_avalanche</span> <span class="o">=</span> <span class="n">avalanche_id_now</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>                            <span class="n">avalanche_id_fut</span><span class="p">[(</span><span class="n">time_slice_fut</span><span class="o">==</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">this_avalanche</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">avalanche_id_fut</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c"># NEW AVALANCHE CASE</span>
+</span><span class='line'>                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">avalanche_id_now</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#and np.count_nonzero(time_slice_past[(time_slice==cluster)]) == 0:</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="n">avalanche_id_now</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)]</span> <span class="o">=</span> <span class="n">avalanche_id_num</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">time_slice_fut</span><span class="p">[(</span><span class="n">time_slice</span><span class="o">==</span><span class="n">cluster</span><span class="p">)])[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>                            <span class="n">avalanche_id_fut</span><span class="p">[(</span><span class="n">time_slice_fut</span><span class="o">==</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">avalanche_id_num</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="n">avalanche_id_num</span> <span class="o">=</span> <span class="n">avalanche_id_num</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="p">]</span> <span class="o">=</span> <span class="n">avalanche_id_now</span>
+</span><span class='line'>                        <span class="n">avalanche_id_total</span><span class="p">[:,:,:,</span><span class="n">t_</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">avalanche_id_fut</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">img_new</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">avalanche_id_total</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">get_header</span><span class="p">(),</span> <span class="n">affine</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">())</span>
+</span><span class='line'>    <span class="c"># Reconstruct the 4D volume</span>
+</span><span class='line'>    <span class="n">cond_rm_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&#39;avalanche.nii.gz&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">img_new</span><span class="o">.</span><span class="n">to_filename</span><span class="p">(</span><span class="n">cond_rm_file</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">avalanche_id_total</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><strong> Discussions on Clustering and Avalanche detection </strong></h2>
+
+<h4><strong> Clustering Detection </strong></h4>
+
+<p>After coding the algorithms as explained in the paper, we extended it to some discussion, we found further questions of interest with regard to the algorithm. Questions that have emerged after initial implementation are the following:</p>
+
+<p>I was wondering about the root aspects of defining 1 single neighbour and not more in the clustering detection and also about the decision of determining a cluster just from one neighbouring. Which are the implications of these assumptions? I actually tried the implementation extending the neighbouring adding more neighbours (2 and 3).</p>
+
+<p>I came across with less and bigger clusters, which we discussed for its possible interest specifically with brain images. See images below for clusters with the proposed 1 distance for neighbours and with a distance of 2, at a given time:</p>
+
+<p><img class="center" src="/C-PAC/images/cluster.png" width="800" height="800" title="image" alt="image"></p>
+
+<p>From these approaches we can have some statistics, showing that the choice of the number of neighbours to consider is not a trivial decision:</p>
+
+<p><img class="center" src="/C-PAC/images/cluster_stats.png" width="800" height="800" title="image" alt="image"></p>
+
+<h4><strong> Avalanche Detection </strong></h4>
+
+<p>We collected all the avalanches for a given subject in a 4D Nifti file. Avalanches were significantly different depending of the choice of the neighbouring size (due to the change of the size of the mean cluster). Here we show a first approximation, we would have liked to make a movie, but we ran out of time for this week.</p>
+
+<p><img class="center" src="/C-PAC/images/avalanche.gif" width="800" height="800" title="image" alt="image"></p>
+
+<p>Here I have made a gif to represent how an avalanche is. This is an avalanche for the N2 cluster, take into account just the voxels in red/orange. It can be showed how the avalanche borns, grows and spreads, and finally dies.</p>
+
+<h2><strong> Heading last week of coding </strong></h2>
+
+<p>Our objectives for next week are:</p>
+
+<ul>
+<li><p>Perform extensive testing over the measures and chose which ones are going to be in the package.</p></li>
+<li><p>Make code corrections and comment all the measures. This will head us into the documentation we have to make.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1506,96 +1909,6 @@ modelling of time series data. But it is not the only one, and our intention is 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Analyzing Correlations, Entropies and Causalities on Brain Data</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-06-03T16:41:23+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>4:41 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Last week we dealt with some aspects on how to construct the workflows:</p>
-
-<ul>
-<li>Develop fully functional ones where to integrate functions. ✓ [Currently, to make transformations with  the data generated during the workflow, you have to specifically save it]</li>
-</ul>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'>   <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">in_file</span><span class="o">+</span><span class="s">&#39;_corr.txt&#39;</span><span class="p">,</span> <span class="n">corr_mat</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>Test and validate in a pilot real data over the workflows and see if we can get some interesting results. ✓ [it has been done using different type of data (filtered, non-filtered&hellip;), different measures (corr, pcorr and MI) and, in the case of MI, different bin(states) numbers (see 2nd part of the post)]</li>
-<li>Implement further synchronization analysis measures.  ✓ [partialcorr workflow was studied and added  to the package and Entropy Correlation Coefficient was implemented as in <a href="http://www.futuremedicine.com/doi/abs/10.2217/14622416.7.3.407">[1]</a>. Also, it was studied the lossless dimensional discretization by the use of better optimal discretization, sampled  entropies and recurrence statistics.</li>
-</ul>
-
-
-<h2><strong>Testing workflows with real data</strong></h2>
-
-<p>I&rsquo;ve tested the Correlation (corr), Partial Correlation (pcorr) and Mutual Information (MI) with 3 different bin_number: 20, 50 and 100, as a pilot approach, were as proper optimization and framework is being fully developed aside. Workflow was tested throughs a dataset of 29 subjects (196 timepoints*voxel) and a 90 ROI parcellation mask (another mask with more parcellations was used, see below). The data was preprocessed and filtered (no global signal was regressed), and rest of criteria were the standards as in <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4162310/">[2]</a>. I&rsquo;ve printed some graphs to comment on results:</p>
-
-<p>a) Randomly selected one matrix (one subject) of each one of the measures: corr, pcorr and MI20 (MI50 and MI100 were too sparse, see below). Corr and MI captured some structures (most of them in common) and pcorr was not able to. We are going to try to figure out what happened with pcorr and if this is a suitable result for this measure.
-In the other hand, results were quite robust between subjects, unveiling similar relations between ROIs. See below the mean matrix over subjects.</p>
-
-<p><img class="center" src="/C-PAC/images/rand_all.png" width="800" height="300" title="image" alt="image"></p>
-
-<p>b) Connectivity as unweighted was found by thresholding correlations with 0.7.</p>
-
-<p><img class="right" src="/C-PAC/images/slopes.png" width="800" height="200" title="image" alt="image"></p>
-
-<p>c) Descriptively, mean values over subjects for MI20, MI50 and MI100. The principal diagonal was set to 0 for visualization purposes, as these values represent the Entropy and are higher that the rest. As can be seen, the reported structures change with the amount of bins chosen.  Having a very blurry effect in MI100 and structures better defined in MI20 (more small MI values, but structures better captured). This is mainly because having 100 states for a signal with 196 timepoints, reduces the possibility of repeating a state, thus, the maximum value of the MI increases (approximating the  maximum possible Entropy) as the number of bins increases.</p>
-
-<p><img class="right" src="/C-PAC/images/MI_bins.png" width="800" height="200" title="image" alt="image"></p>
-
-<p>If we superpose again the sorted frequencies in the matrices, using those 3 prospective thresholds, we obtain a similar pattern of also acceptable information lossless discretization. However, the choice of threshold was something more arbitrary that we had not been able to discuss.</p>
-
-<p><img class="right" src="/C-PAC/images/freq_MI.png" width="800" height="200" title="image" alt="image"></p>
-
-<h2><strong>Theory and discussion</strong></h2>
-
-<p>We also progressed in discussion, I&rsquo;ve a clearer vision of how to implement Multivariate Conditional Granger Causality, based on the one in <a href="http://www.sciencedirect.com/science/article/pii/S0165027013003701">[3]</a> , implementing &ldquo;conditional&rdquo; Granger Causality in multivariate manner <a href="http://www.sciencedirect.com/science/article/pii/S0165027008002379">[4]</a>. For this purpose, we will program an algorithm that uses the autocovariance sequence and discover whether one of these sequences is reducing the uncertainty of the second (with the mean prediction error), having into account the rest of the series. The order of the model will be likely to be 1, since the TR has a low frequency and the dynamics between the source and the target for order higher would be too separated from each other.
-The implementation is still in research phase, but I&rsquo;ve done some experiments with randomly generated series:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-</span><span class='line'><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Z</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">copy</span><span class="p">();</span>
-</span><span class='line'><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c">#so: X influences Z with timelag 1 (order)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And then, as explained <a href="http://www.nld.ds.mpg.de/~timeseries/presentations/granger.py">here</a>.</p>
-
-<p>With this, we are heading towards a transition from the first to the second box of measures that we were thinking of (the first one more related to preprocessing like filtering, synchronization, basic entropies&hellip; and the second one as an analysis module, where we are adding Conditional Granger Causality, Mutual Information, Entropy Correlation Coefficient and many more to come). Anyway, we are not closing the door of the first box, since we have in mind to implement surrogate analysis as in <a href="http://www.sciencedirect.com/science/article/pii/S0167278900000439">[5]</a> to unveil non-linear phenomena occurring.</p>
-
-<p>Moreover, we were thinking in implementing some kind of preprocessing scripts for frequency-filtering and computing the z-score of the series. Actually, an easy band_pass filter was added to <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py#L409-L427">the repo</a> . But then we realised that CPAC already has this functionality implemented, it works fine and there is no point in duplicating it. We will save the bp filter in case we want to use it later on, as we have seen that could be interesting to save some specific bandwidth for some analyses <a href="http://www.sciencedirect.com/science/article/pii/S1053811910011602">[6]</a>. We will further discuss these options, as we are heading towards frequency and coherence analysis as we see that it will bring us interesting possibilities.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/C-PAC/posts/2">&larr; Older</a>
@@ -1611,6 +1924,10 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/">Clustering and Avalanche Detection Algorithms [in PROGRESS]</a>
+      </li>
+    
+      <li class="post">
         <a href="/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/">Integration of Measures and Point Process Developing</a>
       </li>
     
@@ -1624,10 +1941,6 @@ The implementation is still in research phase, but I&rsquo;ve done some experime
     
       <li class="post">
         <a href="/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/">Testing Over ADHD Patients Data</a>
-      </li>
-    
-      <li class="post">
-        <a href="/C-PAC/blog/2015/06/30/midterm-summary-and-next-objectives/">Midterm Summary and Next Objectives</a>
       </li>
     
   </ul>
