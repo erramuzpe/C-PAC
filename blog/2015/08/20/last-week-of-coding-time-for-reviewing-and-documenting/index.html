@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>First Post - Hello World - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <title>Last Week of Coding: Time for Reviewing and Documenting - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
   <meta name="author" content="github.com/erramuzpe">
 
   
-  <meta name="description" content="1
-2
-print &#39;Hello World!&#39;
-print &#39;Kaixo Mundua!&#39; ">
+  <meta name="description" content="As planned in the previous week, an extensive code reviewing and commenting has been carried out during this last week of coding. Major objectives in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ print &#39;Kaixo Mundua!&#39; ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/">
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/">
   <link href="/C-PAC/favicon.png" rel="icon">
   <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
@@ -71,7 +68,7 @@ print &#39;Kaixo Mundua!&#39; ">
   
   <header>
     
-      <h1 class="entry-title">First Post - Hello World</h1>
+      <h1 class="entry-title">Last Week of Coding: Time for Reviewing and Documenting</h1>
     
     
       <p class="meta">
@@ -80,18 +77,39 @@ print &#39;Kaixo Mundua!&#39; ">
 
 
 
-<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
+<time class='entry-date' datetime='2015-08-20T15:32:14+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:32 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
-</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="entry-content"><p>As planned in the previous week, an extensive code reviewing and commenting has been carried out during this last week of coding. Major objectives in this code revision were to fix small bugs, to have a common standard for function&rsquo;s headers, to have commented the main aspects of the functions and to make a full cleaning of the code (with the aim of being as much readable as possible). Many lines of code have been added as explanation of the measures and this was helpful also for the documentation work that we have started in collaboration with John.</p>
+
+<p>It is also important to make comments with regard to possibilities that the developed tools have for future uses (combinations of measures, links to other modules&hellip;), or outputs relevant to the technique. To this aspect we have both put our hands on. This is also being added as documentation inside the scripts, as well as some easy procedures to make figures as the ones showed in this blog.</p>
+
+<p>Moreover, some linker function calls have been inserted (e.g. the ones to make the calls to GC module and a full new workflow dedicated to criticality, since this was the one with different data input). With regard to GC module, as we had some strange behaviour on a transformation, we have contacted the developers of the MVGC toolbox and we are involved in discussion with Dr. L. Barnett regard to this issue, engaging well on what it could be a helping hand. We will keep working on this during next week.</p>
+
+<h2><strong> Running experiments in the cluster </strong></h2>
+
+<p>Further, this week it&rsquo;s been really fruitful from the point of view of the data analysis. We have been able to build scripts to make our tests run @IFISC cluster, so we can make use of parallelization to calculate our measures over large datasets. To make a first approach, we have been able to compute the whole clustering (1 and 2 neighbours approach) + the avalanche detection for a dataset of 139 subjects in less than 30 mins (it was an average of 20 mins for each subject in my own PC). This will allow us to make extensive data analyzing with the measures and discuss and note parameters as we do document and consider the impact of measures and their preeminence.</p>
+
+<p>As example, here we show a small analysis between 2 groups of 21 subjects (autism and non-autism patients). The number of avalanches and the number of voxels belonging to an avalanche calculated after 2 neighbour clustering have been studied:</p>
+
+<p><img class="center" src="/C-PAC/images/autist.png" width="700" height="700" title="image" alt="image"></p>
+
+<p>Means over groups and the ratio voxel_number per avalanche were also calculated over groups and differences were neither appreciate. More analyses had to be done, like computing the average lifetime of an avalanche and the avalanche-wise size.</p>
+
+<h2><strong> Last week&rsquo;s objectives </strong></h2>
+
+<p>Our objectives for the last week are:</p>
+
+<ul>
+<li><p>Make last corrections and finalize documentation work as far as possible. In this task, we are going through the code to make insertions that would describe links between measures, graphics of interests, etc</p></li>
+<li><p>Evaluate the work done. Achievements / Fails as to create a little memorandum for the delivery, and possible lines for collaboration</p></li>
+<li><p>Pack the code and submit, in agreement with John and hoping to get impressions too</p></li>
+<li><p>Close project, open future: Make the toolbox more fruitful and better suited. Keep a line of communication for helping on further developments and distend chat about future ideas, and thank so much the team for accommodating us!</p></li>
+</ul>
 
 </div>
 
@@ -108,7 +126,7 @@ print &#39;Kaixo Mundua!&#39; ">
 
 
 
-<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
+<time class='entry-date' datetime='2015-08-20T15:32:14+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:32 pm</span></time>
       
 
 
@@ -116,7 +134,7 @@ print &#39;Kaixo Mundua!&#39; ">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/" >Tweet</a>
   
   
   
@@ -125,8 +143,8 @@ print &#39;Kaixo Mundua!&#39; ">
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/" title="Previous Post: Clustering and Avalanche detection algorithms">&laquo; Clustering and Avalanche detection algorithms</a>
       
-        <a class="basic-alignment right" href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/" title="Next Post: First scripts for C-PAC: this is just the beginning">First scripts for C-PAC: this is just the beginning &raquo;</a>
       
     </p>
   </footer>
@@ -221,8 +239,8 @@ print &#39;Kaixo Mundua!&#39; ">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/';
-        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/05/08/Hello-World/';
+        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/';
+        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/';
         var disqus_script = 'embed.js';
       
     (function () {

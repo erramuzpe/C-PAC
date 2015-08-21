@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://erramuzpe.github.io/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/</loc>
+    <lastmod>2015-08-20T15:32:14+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://erramuzpe.github.io/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/</loc>
     <lastmod>2015-08-14T13:10:51+02:00</lastmod>
   </url>
