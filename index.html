@@ -1478,24 +1478,8 @@ We have choosen a random signal of an fMRI file to show the example:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
 </pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">phase_sync</span><span class="p">(</span><span class="n">X</span><span class="p">):</span> <span class="c"># Computes the PS_value as explained in Ponce et al. 2015</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">scipy.signal.signaltools</span> <span class="kn">as</span> <span class="nn">sigtool</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">htx</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span class='line'>    <span class="c"># This converts (real, imag) to an angle</span>
-</span><span class='line'>    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">htx</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">px</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c">#PS_value calculated with the module</span>
+</span><span class='line'><span class="c">#this code is wrong, contact the author</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -1507,28 +1491,8 @@ We have choosen a random signal of an fMRI file to show the example:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
 </pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">PLV</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-</span><span class='line'>    <span class="kn">import</span> <span class="nn">scipy.signal.signaltools</span> <span class="kn">as</span> <span class="nn">sigtool</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">htx</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">hty</span> <span class="o">=</span> <span class="n">sigtool</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">htx</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">hty</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">psi</span> <span class="o">=</span> <span class="n">px</span> <span class="o">-</span> <span class="n">py</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c">#PLV_value calculated with the module</span>
+</span><span class='line'><span class="c">#this code is wrong, contact the author</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
