@@ -1,0 +1,1341 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <meta name="author" content="github.com/erramuzpe">
+
+  
+  <meta name="description" content="Wiener-Granger causality (“G-causality”) is a statistical notion of causality applicable to time series data, whereby cause precedes, and helps &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/posts/2/">
+  <link href="/C-PAC/favicon.png" rel="icon">
+  <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
+  <script src="/C-PAC/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/C-PAC/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/C-PAC/">BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</a></h1>
+  
+    <h2>Contributing to C-PAC</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/C-PAC/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="erramuzpe.github.io/C-PAC">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/C-PAC/">Blog</a></li>
+  <li><a href="/C-PAC/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/10/multivariate-granger-causality-in-python-for-fmri-timeseries-analysis/">Multivariate Granger Causality in Python for fMRI Timeseries Analysis</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-10T17:29:44+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:29 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Wiener-Granger causality (“G-causality”) is a statistical notion of causality applicable to time series data, whereby cause precedes, and helps predict, effect.
+For the purpose of analysing fMRI timeseries, we have developed as a first approach a series of python scripts to calculate the Multivariate Granger Causality (MVGC) based on the <a href="http://www.sussex.ac.uk/sackler/mvgc/">MVGC toolbox</a> of Barnett &amp; Seth <a href="http://www.sciencedirect.com/science/article/pii/S0165027013003701">[1]</a>.
+The most common operationalisation of G-causality, and
+the one on which the MVGC Toolbox is based, utilises VAR (vector autoregression)
+modelling of time series data. But it is not the only one, and our intention is to explore other options too and extend to other options that could be more robust.</p>
+
+<p>G-causality assumes two jointly distributed vector-valued stochastic processes (“variables”) X = X1 , X2 , &hellip;, Y = Y1 , Y2 , &hellip;. We say that X does not G-cause Y if and only if Y, conditional on its own past, is independent of the past of X; intuitively, past values of X yield no information about the current value of Y beyond information already contained in the past of Y itself. If, conversely, the past of X does convey information about the future of Y above and beyond all information contained in the past of Y then we say that X G-causes Y, as you can see in the image.</p>
+
+<p><img class="center" src="/C-PAC/images/gc.jpg" width="300" height="300" title="image" alt="image"></p>
+
+<p>The steps to calculate MVGC are the following: We first have to compute the autocovariance matrix from the timeseries. After that, extract the coefficients with the VAR modelling and finally, perform the calculation of the MVGC. More detailed explanations and comments of the code on GitHub and the paper itself. In the following example, X is the timeseries matrix and q is the order of the model (number of lags).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">tsdata_to_autocov</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pylab</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">X</span> <span class="o">=</span> <span class="n">pylab</span><span class="o">.</span><span class="n">demean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">M</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="n">k</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">G</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="n">k</span><span class="p">:</span><span class="n">m</span><span class="p">,:],</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="o">-</span><span class="n">k</span><span class="p">,:],</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="p">))</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">G</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For the calculation of the MVGC, inputs needed are G (autocovariance sequence), x (vector of indices of target (causee) multi-variable) and y (vector of indices of source (causal) multi-variable). The MVGC calculation, extracts the coefficients with the VAR model of all variables (x, y, z) and then without the source (x,z).  The output F is the Granger Causality itself.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">autocov_to_mvgc</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">mvgc</span> <span class="kn">import</span> <span class="n">autocov_to_var</span>
+</span><span class='line'>  
+</span><span class='line'>    <span class="n">n</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">z</span><span class="p">,[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))])</span>
+</span><span class='line'>    <span class="c"># indices of other variables (to condition out)</span>
+</span><span class='line'>    <span class="n">xz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)))</span>
+</span><span class='line'>    <span class="n">xzy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xz</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+</span><span class='line'>    <span class="n">F</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># full regression</span>
+</span><span class='line'>    <span class="n">ixgrid1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">xzy</span><span class="p">,</span><span class="n">xzy</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">AF</span><span class="p">,</span><span class="n">SIG</span><span class="p">]</span> <span class="o">=</span> <span class="n">autocov_to_var</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">ixgrid1</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># reduced regression</span>
+</span><span class='line'>    <span class="n">ixgrid2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">xz</span><span class="p">,</span><span class="n">xz</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">AF</span><span class="p">,</span><span class="n">SIGR</span><span class="p">]</span> <span class="o">=</span> <span class="n">autocov_to_var</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">ixgrid2</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ixgrid3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">SIGR</span><span class="p">[</span><span class="n">ixgrid3</span><span class="p">]))</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">SIG</span><span class="p">[</span><span class="n">ixgrid3</span><span class="p">]))</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">F</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To calculate the coefficients:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">autocov_to_var</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">q1</span><span class="p">]</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">shape</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">q</span> <span class="o">=</span> <span class="n">q1</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">qn</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">n</span>
+</span><span class='line'>    <span class="n">G0</span> <span class="o">=</span> <span class="n">G</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>    <span class="c"># covariance</span>
+</span><span class='line'>    <span class="n">GF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">G</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">:],</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">qn</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+</span><span class='line'>    <span class="c"># backward autocov sequence</span>
+</span><span class='line'>    <span class="n">GB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">G</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">:],</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="p">(</span><span class="n">qn</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># forward  coefficients</span>
+</span><span class='line'>    <span class="n">AF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">qn</span><span class="p">])</span>
+</span><span class='line'>    <span class="c"># backward coefficients (reversed compared with Whittle&#39;s treatment)</span>
+</span><span class='line'>    <span class="n">AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">qn</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># initialise recursion</span>
+</span><span class='line'>    <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span> <span class="c"># model order</span>
+</span><span class='line'>    <span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">-</span><span class="n">k</span>
+</span><span class='line'>    <span class="n">kf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># forward  indices</span>
+</span><span class='line'>    <span class="n">kb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">r</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">qn</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># backward indices</span>
+</span><span class='line'>    <span class="n">AF</span><span class="p">[:,</span><span class="n">kf</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">GB</span><span class="p">[</span><span class="n">kb</span><span class="p">,:],</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">G0</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">AB</span><span class="p">[:,</span><span class="n">kb</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">GF</span><span class="p">[</span><span class="n">kf</span><span class="p">,:],</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">G0</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">DF</span> <span class="o">=</span> <span class="n">GB</span><span class="p">[(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">r</span><span class="o">*</span><span class="n">n</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AF</span><span class="p">[:,</span><span class="n">kf</span><span class="p">],</span><span class="n">GB</span><span class="p">[</span><span class="n">kb</span><span class="p">,:])</span>
+</span><span class='line'>        <span class="n">VB</span> <span class="o">=</span> <span class="n">G0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AB</span><span class="p">[:,</span><span class="n">kb</span><span class="p">],</span><span class="n">GB</span><span class="p">[</span><span class="n">kb</span><span class="p">,:])</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">AAF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">DF</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">VB</span><span class="p">));</span> <span class="c"># DF/VB</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">DB</span> <span class="o">=</span> <span class="n">GF</span><span class="p">[(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">k</span><span class="o">*</span><span class="n">n</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AB</span><span class="p">[:,</span><span class="n">kb</span><span class="p">],</span><span class="n">GF</span><span class="p">[</span><span class="n">kf</span><span class="p">,:])</span>
+</span><span class='line'>        <span class="n">VF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">G0</span><span class="o">-</span><span class="n">AF</span><span class="p">[:,</span><span class="n">kf</span><span class="p">],</span><span class="n">GF</span><span class="p">[</span><span class="n">kf</span><span class="p">,:])</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">AAB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">DB</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">VF</span><span class="p">));</span> <span class="c"># DB/VF</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">AFPREV</span> <span class="o">=</span> <span class="n">AF</span><span class="p">[:,</span><span class="n">kf</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">ABPREV</span> <span class="o">=</span> <span class="n">AB</span><span class="p">[:,</span><span class="n">kb</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">-</span><span class="n">k</span>
+</span><span class='line'>        <span class="n">kf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">kb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">qn</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">AF</span><span class="p">[:,</span><span class="n">kf</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">AFPREV</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AAF</span><span class="p">,</span> <span class="n">ABPREV</span><span class="p">),</span> <span class="n">AAF</span><span class="p">)))</span>
+</span><span class='line'>        <span class="n">AB</span><span class="p">[:,</span><span class="n">kb</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">AAB</span><span class="p">,</span> <span class="n">ABPREV</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AAB</span><span class="p">,</span> <span class="n">AFPREV</span><span class="p">))))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">SIG</span> <span class="o">=</span> <span class="n">G0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">AF</span><span class="p">,</span> <span class="n">GF</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">AF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">AF</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">AF</span><span class="p">,</span> <span class="n">SIG</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is a preliminary version of the MVGC, we now need to test and validate in real data over the workflows and see if we can get some interesting results. Also, we have agreed that it would be useful to code the Pairwise Conditional Granger Causality (which was maybe the first step to make, before MVGC).</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/06/03/advances-of-the-last-week/">Analyzing Correlations, Entropies and Causalities on Brain Data</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-03T16:41:23+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>4:41 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week we dealt with some aspects on how to construct the workflows:</p>
+
+<ul>
+<li>Develop fully functional ones where to integrate functions. ✓ [Currently, to make transformations with  the data generated during the workflow, you have to specifically save it]</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'>   <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">in_file</span><span class="o">+</span><span class="s">&#39;_corr.txt&#39;</span><span class="p">,</span> <span class="n">corr_mat</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Test and validate in a pilot real data over the workflows and see if we can get some interesting results. ✓ [it has been done using different type of data (filtered, non-filtered&hellip;), different measures (corr, pcorr and MI) and, in the case of MI, different bin(states) numbers (see 2nd part of the post)]</li>
+<li>Implement further synchronization analysis measures.  ✓ [partialcorr workflow was studied and added  to the package and Entropy Correlation Coefficient was implemented as in <a href="http://www.futuremedicine.com/doi/abs/10.2217/14622416.7.3.407">[1]</a>. Also, it was studied the lossless dimensional discretization by the use of better optimal discretization, sampled  entropies and recurrence statistics.</li>
+</ul>
+
+
+<h2><strong>Testing workflows with real data</strong></h2>
+
+<p>I&rsquo;ve tested the Correlation (corr), Partial Correlation (pcorr) and Mutual Information (MI) with 3 different bin_number: 20, 50 and 100, as a pilot approach, were as proper optimization and framework is being fully developed aside. Workflow was tested throughs a dataset of 29 subjects (196 timepoints*voxel) and a 90 ROI parcellation mask (another mask with more parcellations was used, see below). The data was preprocessed and filtered (no global signal was regressed), and rest of criteria were the standards as in <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4162310/">[2]</a>. I&rsquo;ve printed some graphs to comment on results:</p>
+
+<p>a) Randomly selected one matrix (one subject) of each one of the measures: corr, pcorr and MI20 (MI50 and MI100 were too sparse, see below). Corr and MI captured some structures (most of them in common) and pcorr was not able to. We are going to try to figure out what happened with pcorr and if this is a suitable result for this measure.
+In the other hand, results were quite robust between subjects, unveiling similar relations between ROIs. See below the mean matrix over subjects.</p>
+
+<p><img class="center" src="/C-PAC/images/rand_all.png" width="800" height="300" title="image" alt="image"></p>
+
+<p>b) Connectivity as unweighted was found by thresholding correlations with 0.7.</p>
+
+<p><img class="right" src="/C-PAC/images/slopes.png" width="800" height="200" title="image" alt="image"></p>
+
+<p>c) Descriptively, mean values over subjects for MI20, MI50 and MI100. The principal diagonal was set to 0 for visualization purposes, as these values represent the Entropy and are higher that the rest. As can be seen, the reported structures change with the amount of bins chosen.  Having a very blurry effect in MI100 and structures better defined in MI20 (more small MI values, but structures better captured). This is mainly because having 100 states for a signal with 196 timepoints, reduces the possibility of repeating a state, thus, the maximum value of the MI increases (approximating the  maximum possible Entropy) as the number of bins increases.</p>
+
+<p><img class="right" src="/C-PAC/images/MI_bins.png" width="800" height="200" title="image" alt="image"></p>
+
+<p>If we superpose again the sorted frequencies in the matrices, using those 3 prospective thresholds, we obtain a similar pattern of also acceptable information lossless discretization. However, the choice of threshold was something more arbitrary that we had not been able to discuss.</p>
+
+<p><img class="right" src="/C-PAC/images/freq_MI.png" width="800" height="200" title="image" alt="image"></p>
+
+<h2><strong>Theory and discussion</strong></h2>
+
+<p>We also progressed in discussion, I&rsquo;ve a clearer vision of how to implement Multivariate Conditional Granger Causality, based on the one in <a href="http://www.sciencedirect.com/science/article/pii/S0165027013003701">[3]</a> , implementing &ldquo;conditional&rdquo; Granger Causality in multivariate manner <a href="http://www.sciencedirect.com/science/article/pii/S0165027008002379">[4]</a>. For this purpose, we will program an algorithm that uses the autocovariance sequence and discover whether one of these sequences is reducing the uncertainty of the second (with the mean prediction error), having into account the rest of the series. The order of the model will be likely to be 1, since the TR has a low frequency and the dynamics between the source and the target for order higher would be too separated from each other.
+The implementation is still in research phase, but I&rsquo;ve done some experiments with randomly generated series:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span><span class='line'><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Z</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">copy</span><span class="p">();</span>
+</span><span class='line'><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c">#so: X influences Z with timelag 1 (order)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then, as explained <a href="http://www.nld.ds.mpg.de/~timeseries/presentations/granger.py">here</a>.</p>
+
+<p>With this, we are heading towards a transition from the first to the second box of measures that we were thinking of (the first one more related to preprocessing like filtering, synchronization, basic entropies&hellip; and the second one as an analysis module, where we are adding Conditional Granger Causality, Mutual Information, Entropy Correlation Coefficient and many more to come). Anyway, we are not closing the door of the first box, since we have in mind to implement surrogate analysis as in <a href="http://www.sciencedirect.com/science/article/pii/S0167278900000439">[5]</a> to unveil non-linear phenomena occurring.</p>
+
+<p>Moreover, we were thinking in implementing some kind of preprocessing scripts for frequency-filtering and computing the z-score of the series. Actually, an easy band_pass filter was added to <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py#L409-L427">the repo</a> . But then we realised that CPAC already has this functionality implemented, it works fine and there is no point in duplicating it. We will save the bp filter in case we want to use it later on, as we have seen that could be interesting to save some specific bandwidth for some analyses <a href="http://www.sciencedirect.com/science/article/pii/S1053811910011602">[6]</a>. We will further discuss these options, as we are heading towards frequency and coherence analysis as we see that it will bring us interesting possibilities.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/28/workflows-working-correlation-and-mutual-information/">Workflows Working: Correlation and Mutual Information</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-28T11:32:58+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:32 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>First of all, I want to anounce that I have enabled comments in the blog, so readers can comment on the entries. Let&rsquo;s see if this new feature enriches the blog.</p>
+
+<p>After having some troubles to get them working, we have the first two nipype workflows running. Both are pairwise calculations made over a series of signals selected by the user with a mask:</p>
+
+<ul>
+<li>Pairwise Correlation over timeseries given a mask.</li>
+<li>Pairwise Mutual Information over timeseries given a mask.</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_ROI_corr</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">corr</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">corr_mat</span> <span class="o">=</span> <span class="n">corr</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">corr_mat</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_MI</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">transform</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">CPAC.series_mod</span> <span class="kn">import</span> <span class="n">mutual_information</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">ROI_data</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">,</span><span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">n_var</span> <span class="o">=</span> <span class="n">ROI_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MI_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_var</span><span class="p">,</span><span class="n">n_var</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">j_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">MI_mat</span><span class="p">[</span><span class="n">i_</span><span class="p">,</span><span class="n">j_</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutual_information</span><span class="p">(</span><span class="n">ROI_data</span><span class="p">[</span><span class="n">i_</span><span class="p">,:],</span><span class="n">ROI_data</span><span class="p">[</span><span class="n">j_</span><span class="p">,:])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">MI_mat</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="right" src="/C-PAC/images/CORRgraph.png" width="200" height="200" title="image" alt="image">
+<img class="right" src="/C-PAC/images/MIgraph.png" width="200" height="200" title="image" alt="image"></p>
+
+<p>In both of them a fMRI file and a mask are needed, and for the MI calculation a variable &ldquo;bins&rdquo; is also needed. This variable is the number of states that the user wants the signals to be discretized to.</p>
+
+<p>This brings up a new problem; <strong>how many states should we choose to discretize?</strong> We are working on this question and discussing whether we should introduce a measure that optimizes the number of bins/states to choose, between other fitting entropy or correlation formalisms. Seems like we could implement some tests to choose a proper &ldquo;number of states&rdquo;, we will have a further debate.</p>
+
+<p>The discretization is done with the following helper function:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">x_old</span><span class="p">,</span> <span class="n">Nbins</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">    TRANSFORM This funcion computes transforms in a matrix</span>
+</span><span class='line'><span class="sd">    to obtain a matrix scaled between the especified number of bins</span>
+</span><span class='line'><span class="sd">    INPUT:</span>
+</span><span class='line'><span class="sd">      x_old: nobservations * nvariables matrix</span>
+</span><span class='line'><span class="sd">      Nbins: Number of bins of the transformed matrix (NBins=2 values betwen</span>
+</span><span class='line'><span class="sd">     -1, NBins=3 values between 0-2...)</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    OUTPUT:  </span>
+</span><span class='line'><span class="sd">    x_new: New scaled matrix</span>
+</span><span class='line'><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">npoints</span><span class="p">,</span> <span class="n">num_vals</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>    <span class="n">xmax</span> <span class="o">=</span> <span class="n">Nbins</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="n">xmin</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="n">ymax</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">ymin</span> <span class="o">=</span> <span class="n">x_old</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#x_new = ((xmax - xmin)/(ymax - ymin) )* x_old - ( (xmax - xmin) / (ymax - ymin) ) * ymin + xmin;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x_old</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">x_new</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">ymin</span><span class="o">+</span><span class="n">xmin</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">x_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">x_new</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Also, when testing the workflows, we encountered another problem. While running the scripts by our own with the code alone, we had the results as we were expecting; but, when building and running the workflows, we can not get the results. We need to investigate on this, since is the basis of many things.</p>
+
+<p>To do:</p>
+
+<ul>
+<li>Solve the problems with workflows.</li>
+<li>Try real data over the workflows and see if we can get some interesting results.</li>
+<li>Implement further synchronization analysis measures.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/26/coding-has-begun/">Coding Has Begun!</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-26T17:31:20+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:31 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Yesterday was the first day of coding of the program, I hope this summer to be a great learning period!</p>
+
+<p>We are now working in a first package of measures that allow us to do a preanalysis of the data and detect non-linear components. We are into measures like Autocorrelation, Entropies (lagged), frequency filtering and many more.</p>
+
+<p>Some problems with memory handling just arose, computing the voxel-wise correlation. We will discuss further how to solve this problem, but we found some solutions <a href="http://stackoverflow.com/questions/13044880/memory-efficient-storage-of-many-large-scipy-sparse-matrices">[1]</a> <a href="http://stackoverflow.com/questions/11002247/how-to-reduce-python-script-memory-usage">[2]</a> to start doing some research about this.</p>
+
+<p>I have added a new <a href="https://gist.github.com/fabianp/9396204419c7b638d38f">partial correlation</a> function developed by Fabian Pedregosa (the author of <a href="http://scikit-learn.org/stable/">Scikit-learn</a>), quite more demanding computationally than the simple correlation.</p>
+
+<p>I have improved the readability of the code and removed totally the calls to nitime  by using numpy.corrcoef to calculate the correlation over series. Also, I have cleaned the code and the user can choose between doing voxel-wise analysis or ROI-timeseries analysis with two new functions (probably I should name them differently, since CPACs already has functions named like that).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">gen_voxel_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    Extracts voxelwise timeseries and return a np array with them.   </span>
+</span><span class='line'><span class="sd">    Parameters</span>
+</span><span class='line'><span class="sd">    ----------</span>
+</span><span class='line'><span class="sd">    in_file : nifti file</span>
+</span><span class='line'><span class="sd">        4D EPI File </span>
+</span><span class='line'><span class="sd">    Returns</span>
+</span><span class='line'><span class="sd">    -------</span>
+</span><span class='line'><span class="sd">    data_array =  voxel(x,y,z) * timepoints</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span><span class='line'>    <span class="c">#print img_data.shape</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">)</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span>
+</span><span class='line'>    <span class="n">voxel_data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_x</span><span class="o">*</span><span class="n">n_y</span><span class="o">*</span><span class="n">n_z</span><span class="p">,</span> <span class="n">n_t</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span>  <span class="n">voxel_data_array</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    Extracts ROI timeseries and return a np array with them.    </span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    Parameters</span>
+</span><span class='line'><span class="sd">    ----------</span>
+</span><span class='line'><span class="sd">    in_file : nifti file</span>
+</span><span class='line'><span class="sd">        4D EPI File       </span>
+</span><span class='line'><span class="sd">    mask_file : nifti file</span>
+</span><span class='line'><span class="sd">        Mask of the EPI File(Only Compute Correlation of voxels in the mask)</span>
+</span><span class='line'><span class="sd">        Must be 3D    </span>
+</span><span class='line'><span class="sd">    Returns</span>
+</span><span class='line'><span class="sd">    -------</span>
+</span><span class='line'><span class="sd">    data_array = ROI_number * timepoints</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mask_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="c"># Cast as rounded-up integer</span>
+</span><span class='line'>    <span class="n">mask_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">mask_data</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">mask_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Invalid Shape Error.&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask_data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c">#quits the ROI number &#39;0&#39;</span>
+</span><span class='line'>    <span class="n">roi_data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span><span class="n">n_samples</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">node_array</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">mask_data</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">roi_data_array</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span>  <span class="n">roi_data_array</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I have in mind the problem of how to save the data structure (&ldquo;timeseries * timepoints&rdquo; or &ldquo;timepoints * timeseries&rdquo;). I should ask this in the IRC, an agreement is necessary for building the functions that are going to use this data.</p>
+
+<p>I will finish this week with the Autocorrelation and Partial-Correlation implementation and testing. Coding these along with Transfer Entropy seem a good first week objective while putting into perspective of coding the points raised during discussion, such as:</p>
+
+<ul>
+<li><p>Type and properties of correlations and entropies to calculate (and how these describe the dimensionality of the data and complex patterns).</p></li>
+<li><p>Relation with frequency decomposition and pattern formation, we should extend discussion to Wavelets/Hurst spectrum.</p></li>
+<li><p>Identify useful elements for the fingerprint method (frequency bands).</p></li>
+</ul>
+
+
+<p>To do:</p>
+
+<ul>
+<li><p>First objective: work on models of correlation, entropies and discretisation, as well as their statistical properties (Also as recurrence, etc.)</p></li>
+<li><p>Discuss further the papers from points Cameron made. ECC seems to be a good measure to incorporate to the package.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/22/bonding-period-discussion-measures-to-work-with/">Notes From the Bonding Period and Discussion: Initial Plan of Implementation</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-22T10:15:01+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>10:15 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1 - Theoretical discussion:</strong></p>
+
+<p>During the Bonding Period, we have been discussiing some measures more thoroughly, thinking in the possible benefits that C-PAC could obtain of implementing and integrating them into a general toolkit around the ideas of . As a test period we have been working on some approaches and analysis tools.</p>
+
+<p><strong>2 - Collection of measures:</strong></p>
+
+<p>Determination of non-linear components, transient and singularities:</p>
+
+<ul>
+<li><p>Autocorrelation: Is the same approach as Granger Causality, but looking to lagged correlation values instead of coefficients. It gives a fast and reliable information about the series, being analyzed with itself.</p></li>
+<li><p>Entropies and information probabilistic content, partial correlations and sampling formalism (binarizing&hellip;)</p></li>
+<li><p>Cross correlation: Pairwise analysis of series looking for a direct correlation between them. The results obtained could be useful to analyze with graph-based methods.</p></li>
+</ul>
+
+
+<p>Granger Causality  is the term used to measure the ability of predicting the future values of a time series using past values of another time series. Unlike in Information Theory measures, it can be applied to the timeseries directly. We have in mind of developing two methods:</p>
+
+<ul>
+<li><p>Granger Causality Test: This test is a statistical hypothesis test for determining whether one time series is useful in forecasting another, using GC terms.</p></li>
+<li><p>Pairwise GC: This measure excludes the effect of other series in the GC calculation in the multivariate approach. It has a high computational demand.</p></li>
+</ul>
+
+
+<p>Some measures to be effective finding connectivity patterns that could be implemented:</p>
+
+<ul>
+<li><p>Avalanches: The importance of this measure relies on the observation that large-scale brain dynamics can be traced as discrete scale-free avalanches. The algorithm has some sub-phases that can be useful too:</p>
+
+<ul>
+<li>Point process analysis: Is the first step to avalanche calculation and also could be a good dimensionality reductor for other problems.</li>
+<li>Clustering and avalanche detection: There are already some clustering algorithms in CPAC that could be reused for this purpose.</li>
+</ul>
+</li>
+<li><p>Multi-fractal analysis, time scaling formalisms&hellip;:  Fractal processes, like trees or coastlines, are defined by self-similarity or power law scaling controlled by a single exponent, simply related to the box-counting dimension or Hurst exponent of the process. Multifractal processes, like turbulence, have more complex behaviours defined by a spectrum of possible local scaling behaviours or singularity exponents.</p></li>
+<li><p>Fingerprints:  A fingerprinting algorithm is a procedure that maps an arbitrarily large data item to a much shorter bit string. We are looking for fMRI suitable fingerprints such IC-fingerprints based on frequency analysis or structural-fingerprints.</p></li>
+</ul>
+
+
+<p><strong>3 - Disscussion on implementation:</strong></p>
+
+<p>These measures will be furtherly discussed and how are they implemented will depend largely in the emerging ideas. Anyway, we have an improved timing (plan) for the project which we are translating into the workflow. In term of metrics: We will work each month in some of the blocks mentioned, having the fourth week reserved for testing over large datasets and code refining (efficiency improvements).</p>
+
+<p><img class="center" src="/C-PAC/images/calendar.png" width="700" height="700" title="image" alt="image"></p>
+
+<p>Moreover, our intention is to keep developing methods for C-PAC after the project period expires, since we are noticing that this can be a good opportunity of both learning and developing new methods.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/21/information-theory-based-measures-and-some-advances/">Information Theory Based Measures and Some Advances</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-21T17:55:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>5:55 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>During the bonding period, very interesting discussions came across related to the measures we could develop during the project. As an initial exercise, I thought it could be interesting to test some basic <a href="https://en.wikipedia.org/wiki/Information_theory">Information Theory</a> based measures. Basically, I wanted to reproduce the calculation of <a href="https://en.wikipedia.org/wiki/Entropy_%28information_theory%29">Entropy</a> and the related measures shown in this image:</p>
+
+<p><img class="left" src="/C-PAC/images/entropy.png" width="350" height="350" title="image" alt="image"></p>
+
+<p>The calculation of the Entropy is quite straightforward, so I decided to test different implementations of some people and test them with the <a href="https://docs.python.org/2/library/timeit.html">timeit</a> module.</p>
+
+<p>It turned that among 4-5 different functions I found <a href="http://blog.biolab.si/2012/06/15/computing-joint-entropy-in-python/">this one</a> coded using numpy and allowing also the calculation of the  <a href="https://en.wikipedia.org/wiki/Joint_entropy">Joint Entropy</a> using itertools was the fastest by far.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">n_insctances</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span class='line'>    <span class="n">H</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">classes</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]):</span>
+</span><span class='line'>        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_insctances</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">predictions</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">H</span> <span class="o">+=</span> <span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">H</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Having the basic blocks, I built the Conditional Entropy and Mutual Information easily:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Hx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hxy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">MI</span> <span class="o">=</span> <span class="n">Hx</span> <span class="o">+</span> <span class="n">Hy</span> <span class="o">-</span> <span class="n">Hxy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">MI</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">cond_entropy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Hy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">Hyx</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">CE</span> <span class="o">=</span> <span class="n">Hyx</span> <span class="o">-</span> <span class="n">Hy</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">CE</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I proved the functions over small vectors and all the properties seemed to work well. In the other hand, I sorted out the loading of the fMRI files (that I was loading with an external function) and the calculation of the TR using just the NIFTI header using  <a href="http://nipy.org/nibabel/">nibabel</a>.</p>
+
+<p>The first time trying to calculate the Entropy voxel-wise (it took like 5 mins and used only 1 core, so this must be solved in <a href="https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/pipeline/cpac_pipeline.py#L5880">some way</a> or <a href="https://docs.python.org/2/library/multiprocessing.html">another</a>) and over 90 timeseries extracted from a ROI-mask, I failed. As these measures are calculated over probability density functions, the data must be converted into &lsquo;states&rsquo;, binarized for example. This is another problem I have to solve: Dealing with fMRI datatypes and FSL functions. I still don&rsquo;t know how to make use directly of FSL utils (and neither about the different FSL options I have. This is a TO DO for my list).</p>
+
+<p>To solve the problem, I&rsquo;ve created my own timeseries extractor (generates a Numpy array, not a CSV file as in <em>gen_roi_timeseries</em>.<em>py</em>):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'>    <span class="n">unit_data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">datafile</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">img_data</span> <span class="o">=</span> <span class="n">datafile</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">unit_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">img_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;FAIL&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">unit_data</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">roi_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n_samples</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Be carefull with number of ROIs and np-arrays</span>
+</span><span class='line'>    <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">node_array</span> <span class="o">=</span> <span class="n">img_data</span><span class="p">[</span><span class="n">unit_data</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">node_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">roi_data</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This structure can be used to extract all voxels timeseries as well. As work for the next week, this data has to be binarized to two (or more) &lsquo;states&rsquo; and then passed to the IT functions.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/08/first-scripts-for-c-pac-this-is-just-the-beginning/">First Scripts for C-PAC: This Is Just the Beginning</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-08T15:40:53+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:40 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In this blog I will write about my experience with C-PAC development. Our intention here is to develop a series of scripts that allow us (C-PAC users) to calculate some measures over non-linear fMRI timeseries and integrate them in a workflow. Our aim is to extend and improve C-PAC&rsquo;s features.</p>
+
+<p>In this first post I will try to explain some of what I have done for my first two scripts for C-PAC as my first contact with C-PAC. I would like to learn a lot about C-PAC&rsquo;s structure, workflows etc. and give back too. The goal of this first scripts is to say &lsquo;hi&rsquo;, have some feedback from main developers and take a first hands-on with the code.</p>
+
+<p>In order to learn from <a href="https://github.com/FCP-INDI/C-PAC">C-PAC&rsquo;s repo</a> on <a href="https://github.com">on GitHub</a> and to C-PAC&rsquo;s forums and I saw a <a href="https://groups.google.com/forum/#!topic/cpax_forum/GMnwQD7B8l8">question</a> on cross correlations and though it could be a good exercise to try possibilities (out of using other available utils like FSLcc) and afterwards, I also made the calculation for Transfer Entropy (TE) Granger Causality (GC)). As a short description, these 2 scripts calculate correlations and GC between ROI-time series extracted from an fMRI file (this is done using a ROI-mask with the <em>gen_roi_timeserier.py</em> function which is already in C-PAC).</p>
+
+<p>My code is in the copy I <a href="https://github.com/erramuzpe/C-PAC">forked</a>, in a new branch called <a href="https://github.com/erramuzpe/C-PAC/tree/series_mod">series_mod</a>. I saved my scripts in a folder of the same name.</p>
+
+<p>We have got here 3 files, <em><em>init</em> _ </em>.py<em>, </em>series_mod.py<em> and </em>utils.py_ .
+I used these three files from a template of other toolbox in C-PAC. <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/series_mod.py"><em>series_mod.py</em></a> generates the workflows:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">create_corr</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">corr</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Workflow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;corr&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">inputNode</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">IdentityInterface</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span>
+</span><span class='line'>                                                <span class="s">&#39;in_file&#39;</span><span class="p">,</span>
+</span><span class='line'>                                                <span class="s">&#39;mask&#39;</span><span class="p">,</span>
+</span><span class='line'>                                                <span class="s">&#39;TR&#39;</span>
+</span><span class='line'>                                                <span class="p">]),</span>
+</span><span class='line'>                        <span class="n">name</span><span class="o">=</span><span class="s">&#39;inputspec&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">outputNode</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">IdentityInterface</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span>
+</span><span class='line'>                                                    <span class="s">&#39;corr_mat&#39;</span><span class="p">]),</span>
+</span><span class='line'>                        <span class="n">name</span><span class="o">=</span><span class="s">&#39;outputspec&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">corr_mat</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">input_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;in_file&#39;</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="s">&#39;TR&#39;</span><span class="p">],</span>
+</span><span class='line'>                                   <span class="n">output_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;out_file&#39;</span><span class="p">],</span>
+</span><span class='line'>                     <span class="n">function</span><span class="o">=</span><span class="n">compute_corr</span><span class="p">),</span>
+</span><span class='line'>                     <span class="n">name</span><span class="o">=</span><span class="s">&#39;corr_mat&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;in_file&#39;</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;in_file&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">inputNode</span><span class="p">,</span> <span class="s">&#39;TR&#39;</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;TR&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">corr</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">corr_mat</span><span class="p">,</span> <span class="s">&#39;out_file&#39;</span><span class="p">,</span>
+</span><span class='line'>                 <span class="n">outputNode</span><span class="p">,</span> <span class="s">&#39;corr_mat&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">corr</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are 3 input parameters; fMRI series, the ROI-mask and TR of the fMRI. This function makes use of the functions in <a href="https://github.com/erramuzpe/C-PAC/blob/series_mod/CPAC/series_mod/utils.py"><em>utils.py</em></a>. Let&rsquo;s see part of the code (present in my repo):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">compute_corr</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">TR</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    Computes the Network Correlation Matrix for ROIs in the mask</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">matplotlib.mlab</span> <span class="kn">import</span> <span class="n">csv2rec</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">cpac.timeseries</span> <span class="kn">import</span> <span class="n">gen_roi_timeseries</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Import the time-series objects:</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.timeseries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+</span><span class='line'>    <span class="c">#Import the analysis objects:</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.analysis</span> <span class="kn">import</span> <span class="n">CorrelationAnalyzer</span>
+</span><span class='line'>    <span class="c">#Import utility functions:</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">nitime.utils</span> <span class="kn">import</span> <span class="n">percent_change</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">output_type</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">,</span><span class="bp">False</span><span class="p">]</span> <span class="c">#list of boolean for csv and npz file formats</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">gen_roi_timeseries</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span>
+</span><span class='line'>    <span class="c">#from this files gen_roi_timeseries</span>
+</span><span class='line'>    <span class="c">#once we have the time series:</span>
+</span><span class='line'>    <span class="n">data_rec</span> <span class="o">=</span> <span class="n">csv2rec</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Extract information:</span>
+</span><span class='line'>    <span class="n">roi_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_rec</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">data_rec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Make an empty container for the data</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">roi_names</span><span class="p">),</span> <span class="n">n_samples</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">n_idx</span><span class="p">,</span> <span class="n">roi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">roi_names</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">data</span><span class="p">[</span><span class="n">n_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_rec</span><span class="p">[</span><span class="n">roi</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Normalize the data:</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">percent_change</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">T</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="n">TR</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">T</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s">&#39;roi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi_names</span>
+</span><span class='line'>    <span class="c">#Initialize the correlation analyzer</span>
+</span><span class='line'>    <span class="n">C</span> <span class="o">=</span> <span class="n">CorrelationAnalyzer</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">## IN CASE WE WOULD LIKE TO ADD A THRESHOLD FEATURE (set inside the function</span>
+</span><span class='line'>    <span class="c"># or from input)</span>
+</span><span class='line'>    <span class="c"># C.corrcoef[C.corrcoef&lt;0.7] = 0</span>
+</span><span class='line'>    <span class="k">return</span>  <span class="n">C</span><span class="o">.</span><span class="n">corrcoef</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is a trivial computation after extracting the time-series. This data could have been treated or filtered, but this first scripts were just to train myself with the repo, python, nypipe workflows etc. .</p>
+
+<p>I started from my own implementations in python, but also took some of this code and ideas from these tutorials:</p>
+
+<p>[1] <a href="http://nipy.org/nitime/examples/resting_state_fmri.html">http://nipy.org/nitime/examples/resting_state_fmri.html</a></p>
+
+<p>[2] <a href="http://nipy.org/nitime/examples/granger_fmri.html">http://nipy.org/nitime/examples/granger_fmri.html</a></p>
+
+<p>The result for the correlation when making calculations on preprocessed data of 3mm voxel-size and a mask of 90 ROIs parcellation is</p>
+
+<p><img class="left" src="/C-PAC/images/result.png" width="350" height="350" title="image" alt="image"></p>
+
+<p>I will discuss about the measures we are going to work on in the next post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/C-PAC/blog/2015/05/08/Hello-World/">First Post - Hello World</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-08T13:44:48+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:44 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">print</span> <span class="s">&#39;Hello World!&#39;</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&#39;Kaixo Mundua!&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/C-PAC/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/C-PAC/index.html">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/">Last Week of Coding: Time for Reviewing and Documenting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/">Clustering and Avalanche Detection Algorithms</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/">Integration of Measures and Point Process Developing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/erramuzpe">@erramuzpe</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'erramuzpe',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/C-PAC/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - github.com/erramuzpe -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'toolsforcpac';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

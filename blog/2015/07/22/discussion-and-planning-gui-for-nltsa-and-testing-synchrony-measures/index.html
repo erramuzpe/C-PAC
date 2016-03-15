@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Discussion and Planning GUI for NLTSA and Testing Synchrony Measures - BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</title>
+  <meta name="author" content="github.com/erramuzpe">
+
+  
+  <meta name="description" content="We are trying to converge to an easy and clear design of the GUI of our toolbox that integrates in CPAC’s structure and allows users to use it. We &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">
+  <link href="/C-PAC/favicon.png" rel="icon">
+  <link href="/C-PAC/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/C-PAC/atom.xml" rel="alternate" title="BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC" type="application/atom+xml">
+  <script src="/C-PAC/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/C-PAC/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/C-PAC/">BUILDING NON-LINEAR ANALYSIS TOOLS FOR C-PAC</a></h1>
+  
+    <h2>Contributing to C-PAC</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/C-PAC/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="erramuzpe.github.io/C-PAC">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/C-PAC/">Blog</a></li>
+  <li><a href="/C-PAC/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-22T12:24:57+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>12:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>We are trying to converge to an easy and clear design of the GUI of our toolbox that integrates in CPAC’s structure and allows users to use it. We are trying here to avoid redundant options in the workflow and it is becoming a quite difficult task, since we want the measures to be separated in differentiated subgroups, but at the same time, give the toolbox the possibility of using common functions (such as the extraction of the timeseries). It has to be non-redundant in this way, the most complicated thing will be the correct use of data structures (to take the ones that are already being generated from other modules in CPAC and to check if the series of a volume had been already extracted, in order to do not duplicate efforts). The design has to be generalizable enough that it can be used in other workflows.</p>
+
+<h2><strong> Planning of the GUI for NLTSA module  </strong></h2>
+
+<p>As the most important part of developing new software, it is always necessary to have a good developing plan. For the purpose of building the GUI for our toolbox, we have divided all our measures in 3 main groups:</p>
+
+<ul>
+<li>Pre-Analysis measures: The ones that not correspond directly to NonLinearTimeSeriesAnalysis and can be applied directly into the extracted data. We can find here synchrony measures in time (correlation, partial correlation) and frequency domain (phase synchrony index, phase locking value). Also, treatment of fingerprints and ICA timeseries extraction are due to be added in this submodule.</li>
+<li>Information Theory and Causality measures: The ones coming from the informative framework and causality. These measures involve the acquisition of information flow and sharing between variables (Mutual Information, Transfer Entropy, Granger Causality Toolbox measures (MVGC, PWCGC)).</li>
+<li>Scale free dynamics measures: This is the box that make use of the most advanced measures (fractality, avalanches, detrended fluctuation analysis, Hurst exponents). These measures are still pending of being developed (planned for August), so we have still not decided about the inputs and the outputs they are generating.</li>
+</ul>
+
+
+<p>The schema shown above has been resumed in the next diagram. Most of the modules make use of other modules functions (we have tried to not being redundant with CPAC’s code). We have ensured that the helper functions developed for our toolbox are available also from outside our module.</p>
+
+<p><img class="center" src="/C-PAC/images/GUI_Diagram.png" width="800" height="800" title="image" alt="image"></p>
+
+<h2><strong> Implementation of the GUI </strong></h2>
+
+<p>Following the instructions published in the previous post, there has been straightforward to build up the 3 subgroups, as they are quite similar between each other. The most important feature for us was the possibility of calculating the measures independently (there is no need of calculating all of them, the user can choose whether to apply the different measures without restriction).</p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_1.png" width="800" height="800" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_2.png" width="800" height="800" title="image" alt="image"></p>
+
+<p><img class="center" src="/C-PAC/images/CPAC_GUI_3.png" width="800" height="800" title="image" alt="image"></p>
+
+<p>A serious work must be done in flow-controlling inside <em>cpac_pipeline.py</em> to avoid repeating the operations present in the submodules (mainly, timeseries generation. Once that are generated, there is no point in extracting them again). Also, it is important to have well connected the toolbox to the main CPAC’s workflow and check whether the data has been previously extracted. Maybe we can talk at some point soon about this and listen to developers thoughts, comments in the post will be very welcomed. Also, we left the door open for interesting modifications that could happen (the 3rd submodule is still pending of being coded and we have in mind to deal with visualization and data presentation). The whole integration will be held in the last week of GSoC with the help of all collaborators and students.</p>
+
+<h2><strong> Synchrony measures in ADHD data </strong></h2>
+
+<p>As we are trying not to evaluate all our measures together at the end, this week we have tried extensively our new dataset from ADHD200 (specific information about the dataset and how we  did our first experiment in <a href="http://erramuzpe.github.io/C-PAC/blog/2015/07/09/testing-different-parcellations-over-ad-patients-data/">previous post</a> ).</p>
+
+<p>We had two measures to test over this data, “phase synchrony index” (which is a self-informative value about the synchrony level of a specific signal) and “phase locking value” (which is the relation between the synchronicity of 2 variables).</p>
+
+<p>We had two measures to test over this data, “phase synchrony index” or PSI (which is a self-informative value about the synchrony level of a specific signal) and “phase locking value” or PLV (which is the relation between the synchronicity of 2 variables).</p>
+
+<h4><strong> Results </strong></h4>
+
+<p>The PSI is a single variable measure, so it is just an self-informative measure. First results showed that the data extracted with the cc400 and cc1000 parcellations had a low synchrony level (some of them looked totally desynchronized). Overall, there was not much to say about differences between ADHD patients and controls.</p>
+
+<p>The PLV, however, showed that the synchrony between some of the signals was strong (>0.7). As these parcellations are randomly created and assigned, consecutive ROIs have not spatial relation and showing the usual matrixes was not going to be informative.</p>
+
+<h2><strong> Solved GC VAR model calculation </strong></h2>
+
+<p>We have changed the paradigm of measuring the residuals for the Granger Causality calculation. Instead of calculating the covariance matrix of the data, which was creating problems later with the VAR model, we have change this. Now, the residuals are calculated directly from the data (the regression model used was OLS using QR decomposition. Specifications in MVGC toolbox docs), without performing the calculation of the covariance matrix.</p>
+
+<p>We performed a small evaluation of the PWGC over our ADHD200 dataset and results were not visually different between groups. We are working in an appropriate way of showing results coming from these measures.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">github.com/erramuzpe</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-07-22T12:24:57+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>12:24 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/" data-via="" data-counturl="http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/" title="Previous Post: Implementing modules in CPAC's GUI">&laquo; Implementing modules in CPAC&#8217;s GUI</a>
+      
+      
+        <a class="basic-alignment right" href="/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/" title="Next Post: Integration of measures and Point Process developing">Integration of measures and Point Process developing &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/20/last-week-of-coding-time-for-reviewing-and-documenting/">Last Week of Coding: Time for Reviewing and Documenting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/14/clustering-and-avalanche-detection-algorithms/">Clustering and Avalanche Detection Algorithms</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/08/07/integration-of-measures-and-point-process-developing/">Integration of Measures and Point Process Developing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/">Discussion and Planning GUI for NLTSA and Testing Synchrony Measures</a>
+      </li>
+    
+      <li class="post">
+        <a href="/C-PAC/blog/2015/07/15/implementing-modules-in-the-gui/">Implementing Modules in CPAC&#8217;s GUI</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/erramuzpe">@erramuzpe</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'erramuzpe',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/C-PAC/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - github.com/erramuzpe -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'toolsforcpac';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/';
+        var disqus_url = 'http://erramuzpe.github.io/C-PAC/blog/2015/07/22/discussion-and-planning-gui-for-nltsa-and-testing-synchrony-measures/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
