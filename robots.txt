@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-
-Sitemap: http://erramuzpe.github.io/C-PAC/sitemap.xml 
